@@ -1,5 +1,5 @@
 %{
-#include "php.tab.h"
+#include "phptopython.tab.h"
 #include <stdio.h>  // Necesario para fprintf
 %}
 
@@ -19,21 +19,17 @@
 ";"         { return SEMICOLON; }
 [0-9]+      { yylval.intval = atoi(yytext); return NUMBER; }
 [a-zA-Z_][a-zA-Z0-9_]*  { yylval.strval = strdup(yytext); return IDENTIFIER; }
-[ \t\n\r]+  { /* Ignore whitespace */ }
+[ \t\n\r]+  {}
 
-// Comentarios de una línea
-"//".*       { /* Ignorar comentarios de una línea */ }
+"//".*       {}
 
-// Comentarios de múltiples líneas (correctamente terminados)
-"/*"([^*]|\*+[^*/])*\*+/  { /* Ignorar comentarios de múltiples líneas */ }
+"/*"([^*]|\*+[^*/])*"*+/" {}
 
-// Comentarios de múltiples líneas no terminados
 "/*"([^*]|\*+[^*/])*$    {
     fprintf(stderr, "Error: comentario no terminado\n");
     exit(1);
 }
 
-// Cualquier otro carácter
 .           { return yytext[0]; }
 
 %%

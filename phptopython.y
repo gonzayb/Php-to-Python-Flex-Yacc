@@ -5,6 +5,7 @@
 
 void yyerror(const char *s); // Declaración de la función de manejo de errores.
 extern int yylex(); // Declaración de la función de análisis léxico generada por Flex.
+extern char *yytext; // Declaración de yytext
 
 // Definición de la estructura y funciones de la tabla de símbolos.
 typedef struct SymbolTable {
@@ -39,12 +40,14 @@ int get_symbol_value(char *name) {
 // Definición de la estructura Node y función para crear nodos.
 typedef struct Node {
     char *code; // Código asociado al nodo.
+    int intval; // Valor entero asociado al nodo.
 } Node;
 
 // Función para crear un nuevo nodo.
 Node *new_node(char *code) {
     Node *node = malloc(sizeof(Node)); // Reserva memoria para un nuevo nodo.
     node->code = strdup(code); // Copia el código en el nodo.
+    node->intval = 0; // Inicializa el valor entero.
     return node; // Devuelve el nuevo nodo.
 }
 %}
@@ -52,7 +55,7 @@ Node *new_node(char *code) {
 %union {
     int intval; // Para números enteros.
     char *strval; // Para identificadores (nombres de variables).
-    Node *node; // Para nodos que contienen código.
+    struct Node *node; // Para nodos que contienen código.
 }
 
 %token IF ELSE WHILE FOR FUNCTION RETURN ASSIGN
@@ -61,8 +64,7 @@ Node *new_node(char *code) {
 
 %type <node> statement expression
 %type <strval> identifier
-%type <node> assignment_statement if_statement while_statement function_declaration return_statement for_statement// Declaración de tipos semánticos
-
+%type <node> assignment_statement if_statement while_statement function_declaration return_statement for_statement // Declaración de tipos semánticos
 %%
 
 program:
@@ -129,19 +131,19 @@ return_statement:
 expression:
     NUMBER {
         $$ = new_node(yytext); // Crear un nuevo nodo con el número.
-        $$.intval = atoi(yytext); // Convertir el texto a entero.
-        printf("%d", $1); // Imprimir el número.
+        $$->intval = atoi(yytext); // Convertir el texto a entero.
+        printf("%d", $$->intval); // Imprimir el número.
     }
     | IDENTIFIER {
         $$ = new_node(yytext); // Crear un nuevo nodo con el identificador.
-        $$.intval = get_symbol_value(yytext); // Obtener el valor de la variable.
-        printf("%s", $1); // Imprimir el identificador.
+        $$->intval = get_symbol_value(yytext); // Obtener el valor de la variable.
+        printf("%s", yytext); // Imprimir el identificador.
     }
     ;
 
 identifier:
     IDENTIFIER {
-        $$ = strdup($1); // Duplicar el identificador.
+        $$ = yytext; // Asignar el identificador.
     }
     ;
 
