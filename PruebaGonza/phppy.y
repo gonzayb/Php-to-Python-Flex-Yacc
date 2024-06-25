@@ -40,10 +40,41 @@ char* get_symbol_type(const char *name) {
 char* strip_quotes(const char* str) {
     int len = strlen(str);
     if (len >= 2 && str[0] == '"' && str[len-1] == '"') {
-        char* new_str = strdup(str + 1);
+        char* new_str = malloc(len - 1);
+        strncpy(new_str, str + 1, len - 2);
         new_str[len - 2] = '\0';
+        
+        // Replace \\n with actual newlines
+        char* src = new_str;
+        char* dst = new_str;
+        while (*src) {
+            if (*src == '\\' && *(src+1) == 'n') {
+                *dst++ = '\n';
+                src += 2;
+            } else {
+                *dst++ = *src++;
+            }
+        }
+        *dst = '\0';
+        
         return new_str;
     }
+    return strdup(str);
+}
+
+char* remove_newlines(const char* str) {
+    char* result = strdup(str);
+    char* dst = result;
+    for (const char* src = str; *src; src++) {
+        if (*src != '\n') {
+            *dst++ = *src;
+        }
+    }
+    *dst = '\0';
+    return result;
+}
+//Desastre esta funcion
+char* replace_dollar(const char* str) {
     return strdup(str);
 }
 %}
@@ -52,7 +83,8 @@ char* strip_quotes(const char* str) {
     char *strval;
 }
 
-%token PHP_START PHP_END SEMICOLON ASSIGN DEFINE LPAREN RPAREN COMMA ARRAY
+%token PHP_START PHP_END SEMICOLON ASSIGN DEFINE LPAREN RPAREN LBRACE RBRACE COMMA ARRAY
+%token IF ECHO_TOKEN IS_INT IS_STRING IS_ARRAY IS_FLOAT IS_BOOL
 %token <strval> VARIABLE INTEGER FLOAT CHAR STRING BOOL
 %type <strval> value array_value value_list
 
@@ -66,28 +98,32 @@ statements: statement
     ;
 
 statement: variable_assignment
+    | variable_declaration
     | constant_declaration
+    | if_statement
     | error SEMICOLON { yyerrok; }
     ;
 
+variable_declaration: VARIABLE SEMICOLON
+{
+    char *var_name = $1 + 1;  // Skip the '$' character
+    printf("%s = None\n", var_name);
+}
+
 variable_assignment: VARIABLE ASSIGN value SEMICOLON
-    {
-        char *type;
-        if (strchr($3, '"') != NULL) {
-            type = "str";
-        } else if (strchr($3, '.') != NULL) {
-            type = "float";
-        } else if (strcmp($3, "True") == 0 || strcmp($3, "False") == 0) {
-            type = "bool";
-        } else if ($3[0] == '[') {
-            type = "List[Any]";
-        } else {
-            type = "int";
-        }
-        add_symbol($1, type);
-        printf("%s: %s = %s\n", $1, type, $3);
-        printf("# PHP: $%s = %s\n", $1, $3);
+{
+    char *var_name = $1 + 1;  // Skip the '$' character
+    if ($3 && strlen($3) > 0) {
+        printf("%s = %s\n", var_name, $3);
+    } else {
+        printf("%s = None\n", var_name);
     }
+}
+| VARIABLE ASSIGN SEMICOLON
+{
+    char *var_name = $1 + 1;  // Skip the '$' character
+    printf("%s = None\n", var_name);
+}
     ;
 
 constant_declaration: DEFINE LPAREN STRING COMMA value RPAREN SEMICOLON
@@ -107,9 +143,33 @@ constant_declaration: DEFINE LPAREN STRING COMMA value RPAREN SEMICOLON
         }
         add_symbol(constant_name, type);
         printf("%s: %s = %s\n", constant_name, type, $5);
-        printf("# PHP: define(\"%s\", %s)\n", constant_name, $5);
         free(constant_name);
     }
+    ;
+
+if_statement: IF LPAREN type_check_func LPAREN VARIABLE RPAREN RPAREN LBRACE ECHO_TOKEN STRING SEMICOLON RBRACE
+{
+    char *type = get_symbol_type($5 + 1);  // Skip the '$' character
+    char *py_type;
+    if (strcmp(type, "int") == 0) py_type = "int";
+    else if (strcmp(type, "str") == 0) py_type = "str";
+    else if (strcmp(type, "list") == 0) py_type = "list";
+    else if (strcmp(type, "float") == 0) py_type = "float";
+    else if (strcmp(type, "bool") == 0) py_type = "bool";
+    else py_type = "object";
+    
+    char *unquoted = strip_quotes($10);
+    char *message = replace_dollar(unquoted);
+    // Remove newlines and format the print statement
+    char *formatted_message = remove_newlines(message);
+    printf("if isinstance(%s, %s):\n    print(%s, \"\\%s\")\n", $5 + 1, py_type, $5 + 1, formatted_message);
+    free(unquoted);
+    free(message);
+    free(formatted_message);
+}
+    ;
+
+type_check_func: IS_INT | IS_STRING | IS_ARRAY | IS_FLOAT | IS_BOOL
     ;
 
 value: INTEGER { $$ = $1; }

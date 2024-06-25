@@ -61,14 +61,23 @@ extern int yydebug;
     DEFINE = 262,                  /* DEFINE  */
     LPAREN = 263,                  /* LPAREN  */
     RPAREN = 264,                  /* RPAREN  */
-    COMMA = 265,                   /* COMMA  */
-    ARRAY = 266,                   /* ARRAY  */
-    VARIABLE = 267,                /* VARIABLE  */
-    INTEGER = 268,                 /* INTEGER  */
-    FLOAT = 269,                   /* FLOAT  */
-    CHAR = 270,                    /* CHAR  */
-    STRING = 271,                  /* STRING  */
-    BOOL = 272                     /* BOOL  */
+    LBRACE = 265,                  /* LBRACE  */
+    RBRACE = 266,                  /* RBRACE  */
+    COMMA = 267,                   /* COMMA  */
+    ARRAY = 268,                   /* ARRAY  */
+    IF = 269,                      /* IF  */
+    ECHO_TOKEN = 270,              /* ECHO_TOKEN  */
+    IS_INT = 271,                  /* IS_INT  */
+    IS_STRING = 272,               /* IS_STRING  */
+    IS_ARRAY = 273,                /* IS_ARRAY  */
+    IS_FLOAT = 274,                /* IS_FLOAT  */
+    IS_BOOL = 275,                 /* IS_BOOL  */
+    VARIABLE = 276,                /* VARIABLE  */
+    INTEGER = 277,                 /* INTEGER  */
+    FLOAT = 278,                   /* FLOAT  */
+    CHAR = 279,                    /* CHAR  */
+    STRING = 280,                  /* STRING  */
+    BOOL = 281                     /* BOOL  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -77,11 +86,11 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 51 "phppy.y"
+#line 82 "phppy.y"
 
     char *strval;
 
-#line 85 "phppy.tab.h"
+#line 94 "phppy.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
