@@ -35,8 +35,8 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_YY_PHPTOPYTHON_TAB_H_INCLUDED
-# define YY_YY_PHPTOPYTHON_TAB_H_INCLUDED
+#ifndef YY_YY_PHPPY_TAB_H_INCLUDED
+# define YY_YY_PHPPY_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -54,20 +54,38 @@ extern int yydebug;
     YYEOF = 0,                     /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
-    IF = 258,                      /* IF  */
-    ELSE = 259,                    /* ELSE  */
-    WHILE = 260,                   /* WHILE  */
-    FOR = 261,                     /* FOR  */
-    FUNCTION = 262,                /* FUNCTION  */
-    RETURN = 263,                  /* RETURN  */
-    ASSIGN = 264,                  /* ASSIGN  */
-    LPAREN = 265,                  /* LPAREN  */
-    RPAREN = 266,                  /* RPAREN  */
-    LBRACE = 267,                  /* LBRACE  */
-    RBRACE = 268,                  /* RBRACE  */
-    SEMICOLON = 269,               /* SEMICOLON  */
-    NUMBER = 270,                  /* NUMBER  */
-    IDENTIFIER = 271               /* IDENTIFIER  */
+    PHP_START = 258,               /* PHP_START  */
+    PHP_END = 259,                 /* PHP_END  */
+    SEMICOLON = 260,               /* SEMICOLON  */
+    ASSIGN = 261,                  /* ASSIGN  */
+    DEFINE = 262,                  /* DEFINE  */
+    LPAREN = 263,                  /* LPAREN  */
+    RPAREN = 264,                  /* RPAREN  */
+    LBRACE = 265,                  /* LBRACE  */
+    RBRACE = 266,                  /* RBRACE  */
+    COMMA = 267,                   /* COMMA  */
+    ARRAY = 268,                   /* ARRAY  */
+    GT = 269,                      /* GT  */
+    LT = 270,                      /* LT  */
+    EQ = 271,                      /* EQ  */
+    IF = 272,                      /* IF  */
+    ELSEIF = 273,                  /* ELSEIF  */
+    ELSE = 274,                    /* ELSE  */
+    ECHO_TOKEN = 275,              /* ECHO_TOKEN  */
+    IS_INT = 276,                  /* IS_INT  */
+    IS_STRING = 277,               /* IS_STRING  */
+    IS_ARRAY = 278,                /* IS_ARRAY  */
+    IS_FLOAT = 279,                /* IS_FLOAT  */
+    IS_BOOL = 280,                 /* IS_BOOL  */
+    WHILE = 281,                   /* WHILE  */
+    ENDWHILE = 282,                /* ENDWHILE  */
+    INCREMENT = 283,               /* INCREMENT  */
+    VARIABLE = 284,                /* VARIABLE  */
+    INTEGER = 285,                 /* INTEGER  */
+    FLOAT = 286,                   /* FLOAT  */
+    CHAR = 287,                    /* CHAR  */
+    STRING = 288,                  /* STRING  */
+    BOOL = 289                     /* BOOL  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -76,13 +94,11 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 55 "phptopython.y"
+#line 140 "phppy.y"
 
-    int intval; // Para números enteros.
-    char *strval; // Para identificadores (nombres de variables).
-    struct Node *node; // Para nodos que contienen código.
+    char *strval;
 
-#line 86 "phptopython.tab.h"
+#line 102 "phppy.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -97,4 +113,4 @@ extern YYSTYPE yylval;
 int yyparse (void);
 
 
-#endif /* !YY_YY_PHPTOPYTHON_TAB_H_INCLUDED  */
+#endif /* !YY_YY_PHPPY_TAB_H_INCLUDED  */

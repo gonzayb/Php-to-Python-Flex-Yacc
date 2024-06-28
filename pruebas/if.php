@@ -5,7 +5,6 @@ if ($a > $b) {
   $b = $a;
 }
 
-
 if ($a > $b) {
     echo "a is bigger than b";
 } elseif ($a == $b) {
