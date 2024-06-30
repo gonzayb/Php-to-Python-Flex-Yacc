@@ -38,8 +38,10 @@ extern void yyerror(const char *s);
 "}"                         { return RBRACE; }
 ">"                         { return GT; }
 "<"                         { return LT; }
+"<="                        { return LE; }
 "=="                        { return EQ; }
-"\+\+"                      { return INCREMENT; }
+"++"                        { return INCREMENT; }
+":"                         { return COLON; }
 ","                         { return COMMA; }
 [ \t\n]                     ; // Ignore whitespace
 "//".*                      ; // Ignore single-line comments

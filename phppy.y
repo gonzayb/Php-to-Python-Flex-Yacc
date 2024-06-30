@@ -141,7 +141,7 @@ char* replace_dollar(const char* str) {
     char *strval;
 }
 
-%token PHP_START PHP_END SEMICOLON ASSIGN DEFINE LPAREN RPAREN LBRACE RBRACE COMMA ARRAY GT LT EQ
+%token PHP_START PHP_END SEMICOLON ASSIGN DEFINE LPAREN RPAREN LBRACE RBRACE COMMA ARRAY GT LT EQ COLON LE
 %token IF ELSEIF ELSE ECHO_TOKEN IS_INT IS_STRING IS_ARRAY IS_FLOAT IS_BOOL WHILE ENDWHILE INCREMENT
 %token <strval> VARIABLE INTEGER FLOAT CHAR STRING BOOL
 %type <strval> value array_value value_list statements statement condicion variable_assignment echo_statement if_statement variable_declaration constant_declaration elseif_clauses elseif_clause else_clause while_statement
@@ -157,12 +157,14 @@ program: PHP_START statements PHP_END
 statements: statement
     | statements statement
     {
-        // Concatenate the two statements
+        //printf("DEBUG: concatenating statements: '%s' and '%s'\n", $1, $2);
         char *result = malloc(strlen($1) + strlen($2) + 1);
         sprintf(result, "%s%s", $1, $2);
         $$ = result;
+        //printf("DEBUG: result of concatenation: '%s'\n", result);
     }
     ;
+
 
 statement: variable_assignment
     | variable_declaration
@@ -208,6 +210,14 @@ variable_assignment: VARIABLE ASSIGN value SEMICOLON
     sprintf(result, "%s = None\n", var_name);
     $$ = result;
 }
+| VARIABLE INCREMENT SEMICOLON
+{
+    char *var_name = $1 + 1;  // Skip the '$' character
+    //printf("DEBUG: variable_increment - var_name = '%s'\n", var_name);
+    char *result = malloc(strlen(var_name) + 7); // Tamaño necesario para " += 1\n" y terminador nulo
+    sprintf(result, "%s += 1\n", var_name);
+    $$ = result;
+}
 ;
 
 echo_statement: ECHO_TOKEN value SEMICOLON
@@ -216,7 +226,23 @@ echo_statement: ECHO_TOKEN value SEMICOLON
     sprintf(result, "print(%s)\n", $2);
     $$ = result;
 }
+| ECHO_TOKEN VARIABLE SEMICOLON
+{
+    char *var_name = $2 + 1;  // Skip the '$' character
+    char *result = malloc(strlen(var_name) + 10);
+    sprintf(result, "print(%s)\n", var_name);
+    $$ = result;
+}
+| ECHO_TOKEN VARIABLE INCREMENT SEMICOLON
+{
+    char *var_name = $2 + 1;  // Skip the '$' character
+    char *result = malloc(strlen(var_name) + 10);
+    sprintf(result, "print(%s)\n%s += 1\n", var_name, var_name);
+    $$ = result;
+}
 ;
+
+
 
 constant_declaration: DEFINE LPAREN STRING COMMA value RPAREN SEMICOLON
 {
@@ -326,14 +352,18 @@ else_clause: ELSE LBRACE statements RBRACE
 
 while_statement: WHILE LPAREN condicion RPAREN LBRACE statements RBRACE
 {
+    //printf("DEBUG: condicion = '%s'\n", $3);
+    //printf("DEBUG: statements = '%s'\n", $6);
     char *indented_statements = indent_code($6);
     char *result = malloc(strlen($3) + strlen(indented_statements) + 15);
     sprintf(result, "while (%s):\n%s", $3, indented_statements);
     $$ = result;
     free(indented_statements);
 }
-| WHILE LPAREN condicion RPAREN LBRACE statements ENDWHILE RBRACE
+| WHILE LPAREN condicion RPAREN COLON statements ENDWHILE SEMICOLON
 {
+    //printf("DEBUG: condicion = '%s'\n", $3);
+    //printf("DEBUG: statements = '%s'\n", $6);
     char *indented_statements = indent_code($6);
     char *result = malloc(strlen($3) + strlen(indented_statements) + 15);
     sprintf(result, "while (%s):\n%s", $3, indented_statements);
@@ -374,6 +404,16 @@ condicion:
     {
         $$ = (char *) malloc(strlen($1) + strlen($3) + 4);
         sprintf($$, "%s == %s", $1 + 1, $3); // En Python se usa '==' para la igualdad
+    }
+    | VARIABLE LE VARIABLE
+    {
+        $$ = (char *) malloc(strlen($1) + strlen($3) + 5);
+        sprintf($$, "%s <= %s", $1 + 1, $3 + 1); // Omitimos el carácter '$'
+    }
+    | VARIABLE LE value
+    {
+        $$ = (char *) malloc(strlen($1) + strlen($3) + 5);
+        sprintf($$, "%s <= %s", $1 + 1, $3); // Omitimos el carácter '$'
     }
 ;
 

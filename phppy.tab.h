@@ -68,24 +68,26 @@ extern int yydebug;
     GT = 269,                      /* GT  */
     LT = 270,                      /* LT  */
     EQ = 271,                      /* EQ  */
-    IF = 272,                      /* IF  */
-    ELSEIF = 273,                  /* ELSEIF  */
-    ELSE = 274,                    /* ELSE  */
-    ECHO_TOKEN = 275,              /* ECHO_TOKEN  */
-    IS_INT = 276,                  /* IS_INT  */
-    IS_STRING = 277,               /* IS_STRING  */
-    IS_ARRAY = 278,                /* IS_ARRAY  */
-    IS_FLOAT = 279,                /* IS_FLOAT  */
-    IS_BOOL = 280,                 /* IS_BOOL  */
-    WHILE = 281,                   /* WHILE  */
-    ENDWHILE = 282,                /* ENDWHILE  */
-    INCREMENT = 283,               /* INCREMENT  */
-    VARIABLE = 284,                /* VARIABLE  */
-    INTEGER = 285,                 /* INTEGER  */
-    FLOAT = 286,                   /* FLOAT  */
-    CHAR = 287,                    /* CHAR  */
-    STRING = 288,                  /* STRING  */
-    BOOL = 289                     /* BOOL  */
+    COLON = 272,                   /* COLON  */
+    LE = 273,                      /* LE  */
+    IF = 274,                      /* IF  */
+    ELSEIF = 275,                  /* ELSEIF  */
+    ELSE = 276,                    /* ELSE  */
+    ECHO_TOKEN = 277,              /* ECHO_TOKEN  */
+    IS_INT = 278,                  /* IS_INT  */
+    IS_STRING = 279,               /* IS_STRING  */
+    IS_ARRAY = 280,                /* IS_ARRAY  */
+    IS_FLOAT = 281,                /* IS_FLOAT  */
+    IS_BOOL = 282,                 /* IS_BOOL  */
+    WHILE = 283,                   /* WHILE  */
+    ENDWHILE = 284,                /* ENDWHILE  */
+    INCREMENT = 285,               /* INCREMENT  */
+    VARIABLE = 286,                /* VARIABLE  */
+    INTEGER = 287,                 /* INTEGER  */
+    FLOAT = 288,                   /* FLOAT  */
+    CHAR = 289,                    /* CHAR  */
+    STRING = 290,                  /* STRING  */
+    BOOL = 291                     /* BOOL  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -98,7 +100,7 @@ union YYSTYPE
 
     char *strval;
 
-#line 102 "phppy.tab.h"
+#line 104 "phppy.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
