@@ -141,10 +141,10 @@ char* replace_dollar(const char* str) {
     char *strval;
 }
 
-%token PHP_START PHP_END SEMICOLON ASSIGN DEFINE LPAREN RPAREN LBRACE RBRACE COMMA ARRAY GT LT EQ COLON LE
+%token PHP_START PHP_END SEMICOLON ASSIGN DEFINE LPAREN RPAREN LBRACE RBRACE COMMA ARRAY GT LT EQ COLON LE NE ARROW LBRACKET RBRACKET
 %token IF ELSEIF ELSE ECHO_TOKEN IS_INT IS_STRING IS_ARRAY IS_FLOAT IS_BOOL WHILE ENDWHILE INCREMENT RETURN FUNCTION
 %token <strval> VARIABLE INTEGER FLOAT CHAR STRING BOOL IDENTIFIER
-%type <strval> value array_value value_list statements statement condicion variable_assignment echo_statement if_statement variable_declaration constant_declaration elseif_clauses elseif_clause else_clause while_statement function_declaration parameter_list function_call argument_list
+%type <strval> value array_value value_list statements statement condicion variable_assignment echo_statement if_statement variable_declaration constant_declaration elseif_clauses elseif_clause else_clause while_statement function_declaration parameter_list function_call argument_list key_value_list key_value_pair array_declaration array_item array_items
 
 %%
 
@@ -230,6 +230,13 @@ variable_assignment: VARIABLE ASSIGN value SEMICOLON
     //printf("DEBUG: variable_increment - var_name = '%s'\n", var_name);
     char *result = malloc(strlen(var_name) + 7); // Tamaño necesario para " += 1\n" y terminador nulo
     sprintf(result, "%s += 1\n", var_name);
+    $$ = result;
+}
+| VARIABLE ASSIGN array_declaration SEMICOLON
+{
+    char *var_name = $1 + 1;  // Skip the '$' character
+    char *result = malloc(strlen(var_name) + strlen($3) + 5);
+    sprintf(result, "%s = %s\n", var_name, $3);
     $$ = result;
 }
 ;
@@ -320,20 +327,45 @@ if_statement: IF LPAREN type_check_func LPAREN VARIABLE RPAREN RPAREN LBRACE ECH
 | IF LPAREN condicion RPAREN LBRACE statements RBRACE else_clause
 {
     char *if_part = indent_code($6);
-    char *result = malloc(strlen($3) + strlen(if_part) + strlen($8) + 10);
+    char *result = malloc(strlen($3) + strlen(if_part) + strlen($8) + 20);
     sprintf(result, "if (%s):\n%s%s", $3, if_part, $8);
     $$ = result;
     free(if_part);
 }
 | IF LPAREN condicion RPAREN LBRACE statements RBRACE
 {
+    //printf("DEBUG: if_statement - statements = '%s'\n", $6);
     char *if_part = indent_code($6);
     char *result = malloc(strlen($3) + strlen(if_part) + 10);
     sprintf(result, "if (%s):\n%s", $3, if_part);
     $$ = result;
     free(if_part);
 }
+// PARA AGREGAR PASS
+| IF LPAREN condicion RPAREN LBRACE RBRACE
+{
+    char *result = malloc(strlen($3) + 15);
+    sprintf(result, "if (%s):\n    pass\n", $3);
+    $$ = result;
+}
+| IF LPAREN condicion RPAREN LBRACE statements RBRACE ELSE LBRACE RBRACE
+{
+    char *indented_statements_if = indent_code($6);
+    char *result = malloc(strlen($3) + strlen(indented_statements_if) + 20);
+    sprintf(result, "if (%s):\n%selse:\n    pass\n", $3, indented_statements_if);
+    $$ = result;
+    free(indented_statements_if);
+}
+| IF LPAREN condicion RPAREN LBRACE RBRACE ELSE LBRACE statements RBRACE
+{
+    char *indented_statements_else = indent_code($9);
+    char *result = malloc(strlen($3) + strlen(indented_statements_else) + 20);
+    sprintf(result, "if (%s):\n    pass\nelse:\n%s", $3, indented_statements_else);
+    $$ = result;
+    free(indented_statements_else);
+}
 ;
+
 
 elseif_clauses: elseif_clause
     | elseif_clauses elseif_clause
@@ -357,7 +389,7 @@ elseif_clause: ELSEIF LPAREN condicion RPAREN LBRACE statements RBRACE
 else_clause: ELSE LBRACE statements RBRACE
 {
     char *else_part = indent_code($3);
-    char *result = malloc(strlen(else_part) + 7);
+    char *result = malloc(strlen(else_part) + 20);
     sprintf(result, "else:\n%s", else_part);
     $$ = result;
     free(else_part);
@@ -383,6 +415,20 @@ while_statement: WHILE LPAREN condicion RPAREN LBRACE statements RBRACE
     sprintf(result, "while (%s):\n%s", $3, indented_statements);
     $$ = result;
     free(indented_statements);
+}
+//PARA AGREGAR PASS
+| WHILE LPAREN condicion RPAREN LBRACE RBRACE
+{
+    char *result = malloc(strlen($3) + 15);
+    sprintf(result, "while (%s):\n    pass\n", $3);
+    $$ = result;
+}
+| WHILE LPAREN condicion RPAREN COLON ENDWHILE SEMICOLON
+{
+    printf("DEBUG: while_statement - condicion = '%s' (empty block)\n", $3);
+    char *result = malloc(strlen($3) + 15);
+    sprintf(result, "while (%s):\n    pass\n", $3);
+    $$ = result;
 }
 ;
 
@@ -429,6 +475,16 @@ condicion:
         $$ = (char *) malloc(strlen($1) + strlen($3) + 5);
         sprintf($$, "%s <= %s", $1 + 1, $3); // Omitimos el carácter '$'
     }
+    | value EQ value
+    {
+        $$ = (char *) malloc(strlen($1) + strlen($3) + 4);
+        sprintf($$, "%s == %s", $1, $3); // En Python se usa '==' para la igualdad
+    }
+    | value NE value
+    {
+        $$ = (char *) malloc(strlen($1) + strlen($3) + 5);
+        sprintf($$, "%s != %s", $1, $3); // En Python se usa '!=' para desigualdad
+    }
 ;
 
 
@@ -441,12 +497,70 @@ value: INTEGER { $$ = $1; }
     | STRING { $$ = $1; }
     | BOOL { $$ = $1; }
     | array_value { $$ = $1; }
+    | VARIABLE LBRACKET value RBRACKET
+    {
+        char *result = malloc(strlen($1) + strlen($3) + 4);
+        sprintf(result, "%s[%s]", $1 + 1, $3);  // Skip the '$' character
+        $$ = result;
+    }
+    | VARIABLE LBRACKET STRING RBRACKET
+    {
+        char *key = strip_quotes($3);
+        char *result = malloc(strlen($1) + strlen(key) + 4);
+        sprintf(result, "%s[%s]", $1 + 1, key);  // Skip the '$' character
+        free(key);
+        $$ = result;
+    }
 ;
 
-array_value: ARRAY LPAREN value_list RPAREN
+array_value: ARRAY LPAREN RPAREN
+{
+    $$ = strdup("{}");
+}
+| ARRAY LPAREN value_list RPAREN
 {
     char *result = malloc(strlen($3) + 3);
     sprintf(result, "[%s]", $3);
+    $$ = result;
+}
+| ARRAY LPAREN key_value_list RPAREN
+{
+    char *result = malloc(strlen($3) + 3);
+    sprintf(result, "{%s}", $3);
+    $$ = result;
+}
+| ARRAY LPAREN key_value_pair RPAREN
+{
+    char *result = malloc(strlen($3) + 3);
+    sprintf(result, "{%s}", $3);
+    $$ = result;
+}
+;
+
+key_value_list: key_value_pair
+{
+    $$ = $1;
+}
+| key_value_list COMMA key_value_pair
+{
+    char *result = malloc(strlen($1) + strlen($3) + 2);
+    sprintf(result, "%s, %s", $1, $3);
+    $$ = result;
+}
+;
+
+key_value_pair: STRING ARROW value
+{
+    char *key = strip_quotes($1);
+    char *result = malloc(strlen(key) + strlen($3) + 4);
+    sprintf(result, "%s: %s", key, $3);
+    free(key);
+    $$ = result;
+}
+| IDENTIFIER ARROW value
+{
+    char *result = malloc(strlen($1) + strlen($3) + 4);
+    sprintf(result, "\"%s\": %s", $1, $3);
     $$ = result;
 }
 ;
@@ -540,6 +654,51 @@ argument_list: /* empty */
 {
     char *result = malloc(strlen($1) + strlen($3) + 2);
     sprintf(result, "%s, %s", $1, $3);
+    $$ = result;
+}
+;
+
+array_declaration: ARRAY LPAREN array_items RPAREN
+{
+    char *result = malloc(strlen($3) + 3);
+    sprintf(result, "{%s}", $3);
+    $$ = result;
+}
+;
+
+array_items: array_item
+    | array_items COMMA array_item
+    {
+        char *result = malloc(strlen($1) + strlen($3) + 3);
+        sprintf(result, "%s, %s", $1, $3);
+        $$ = result;
+    }
+    ;
+
+array_item: STRING ARROW array_declaration
+{
+    char *key = strip_quotes($1);
+    char *result = malloc(strlen(key) + strlen($3) + 5);
+    sprintf(result, "\"%s\": %s", key, $3);
+    free(key);
+    $$ = result;
+}
+| STRING ARROW STRING
+{
+    char *key = strip_quotes($1);
+    char *value = strip_quotes($3);
+    char *result = malloc(strlen(key) + strlen(value) + 5);
+    sprintf(result, "\"%s\": \"%s\"", key, value);
+    free(key);
+    free(value);
+    $$ = result;
+}
+| STRING ARROW INTEGER
+{
+    char *key = strip_quotes($1);
+    char *result = malloc(strlen(key) + strlen($3) + 5);
+    sprintf(result, "\"%s\": %s", key, $3);
+    free(key);
     $$ = result;
 }
 ;

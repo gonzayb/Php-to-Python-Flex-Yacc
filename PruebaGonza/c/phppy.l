@@ -24,9 +24,9 @@ extern void yyerror(const char *s);
 "elseif"                    { return ELSEIF; }
 "while"                     { return WHILE; }
 "endwhile"                  { return ENDWHILE; }
+"echo"                      { return ECHO_TOKEN; }
 "function"                  { return FUNCTION; }
 "return"                    { return RETURN; }
-"echo"                      { return ECHO_TOKEN; }
 "$"[a-zA-Z_][a-zA-Z0-9_]*   { yylval.strval = strdup(yytext); return VARIABLE; }
 [0-9]+                      { yylval.strval = strdup(yytext); return INTEGER; }
 [0-9]+\.[0-9]+              { yylval.strval = strdup(yytext); return FLOAT; }
@@ -39,10 +39,14 @@ extern void yyerror(const char *s);
 ")"                         { return RPAREN; }
 "{"                         { return LBRACE; }
 "}"                         { return RBRACE; }
+"=>"                        { return ARROW; }
+"["                         { return LBRACKET; }
+"]"                         { return RBRACKET; }
 ">"                         { return GT; }
 "<"                         { return LT; }
 "<="                        { return LE; }
 "=="                        { return EQ; }
+"!="                        { return NE; }
 "++"                        { return INCREMENT; }
 ":"                         { return COLON; }
 ","                         { return COMMA; }

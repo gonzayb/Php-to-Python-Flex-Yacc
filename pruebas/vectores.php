@@ -1,4 +1,3 @@
-
 <?php
 $array = array(
     "foo" => "bar",
