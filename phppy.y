@@ -141,7 +141,7 @@ char* replace_dollar(const char* str) {
     char *strval;
 }
 
-%token PHP_START PHP_END SEMICOLON ASSIGN DEFINE LPAREN RPAREN LBRACE RBRACE COMMA ARRAY GT LT EQ COLON LE
+%token PHP_START PHP_END SEMICOLON ASSIGN DEFINE LPAREN RPAREN LBRACE RBRACE COMMA ARRAY GT LT EQ COLON LE NE
 %token IF ELSEIF ELSE ECHO_TOKEN IS_INT IS_STRING IS_ARRAY IS_FLOAT IS_BOOL WHILE ENDWHILE INCREMENT
 %token <strval> VARIABLE INTEGER FLOAT CHAR STRING BOOL
 %type <strval> value array_value value_list statements statement condicion variable_assignment echo_statement if_statement variable_declaration constant_declaration elseif_clauses elseif_clause else_clause while_statement
@@ -306,20 +306,45 @@ if_statement: IF LPAREN type_check_func LPAREN VARIABLE RPAREN RPAREN LBRACE ECH
 | IF LPAREN condicion RPAREN LBRACE statements RBRACE else_clause
 {
     char *if_part = indent_code($6);
-    char *result = malloc(strlen($3) + strlen(if_part) + strlen($8) + 10);
+    char *result = malloc(strlen($3) + strlen(if_part) + strlen($8) + 20);
     sprintf(result, "if (%s):\n%s%s", $3, if_part, $8);
     $$ = result;
     free(if_part);
 }
 | IF LPAREN condicion RPAREN LBRACE statements RBRACE
 {
+    //printf("DEBUG: if_statement - statements = '%s'\n", $6);
     char *if_part = indent_code($6);
     char *result = malloc(strlen($3) + strlen(if_part) + 10);
     sprintf(result, "if (%s):\n%s", $3, if_part);
     $$ = result;
     free(if_part);
 }
+// PARA AGREGAR PASS
+| IF LPAREN condicion RPAREN LBRACE RBRACE
+{
+    char *result = malloc(strlen($3) + 15);
+    sprintf(result, "if (%s):\n    pass\n", $3);
+    $$ = result;
+}
+| IF LPAREN condicion RPAREN LBRACE statements RBRACE ELSE LBRACE RBRACE
+{
+    char *indented_statements_if = indent_code($6);
+    char *result = malloc(strlen($3) + strlen(indented_statements_if) + 20);
+    sprintf(result, "if (%s):\n%selse:\n    pass\n", $3, indented_statements_if);
+    $$ = result;
+    free(indented_statements_if);
+}
+| IF LPAREN condicion RPAREN LBRACE RBRACE ELSE LBRACE statements RBRACE
+{
+    char *indented_statements_else = indent_code($9);
+    char *result = malloc(strlen($3) + strlen(indented_statements_else) + 20);
+    sprintf(result, "if (%s):\n    pass\nelse:\n%s", $3, indented_statements_else);
+    $$ = result;
+    free(indented_statements_else);
+}
 ;
+
 
 elseif_clauses: elseif_clause
     | elseif_clauses elseif_clause
@@ -343,7 +368,7 @@ elseif_clause: ELSEIF LPAREN condicion RPAREN LBRACE statements RBRACE
 else_clause: ELSE LBRACE statements RBRACE
 {
     char *else_part = indent_code($3);
-    char *result = malloc(strlen(else_part) + 7);
+    char *result = malloc(strlen(else_part) + 20);
     sprintf(result, "else:\n%s", else_part);
     $$ = result;
     free(else_part);
@@ -369,6 +394,20 @@ while_statement: WHILE LPAREN condicion RPAREN LBRACE statements RBRACE
     sprintf(result, "while (%s):\n%s", $3, indented_statements);
     $$ = result;
     free(indented_statements);
+}
+//PARA AGREGAR PASS
+| WHILE LPAREN condicion RPAREN LBRACE RBRACE
+{
+    char *result = malloc(strlen($3) + 15);
+    sprintf(result, "while (%s):\n    pass\n", $3);
+    $$ = result;
+}
+| WHILE LPAREN condicion RPAREN COLON ENDWHILE SEMICOLON
+{
+    printf("DEBUG: while_statement - condicion = '%s' (empty block)\n", $3);
+    char *result = malloc(strlen($3) + 15);
+    sprintf(result, "while (%s):\n    pass\n", $3);
+    $$ = result;
 }
 ;
 
@@ -414,6 +453,16 @@ condicion:
     {
         $$ = (char *) malloc(strlen($1) + strlen($3) + 5);
         sprintf($$, "%s <= %s", $1 + 1, $3); // Omitimos el carácter '$'
+    }
+    | value EQ value
+    {
+        $$ = (char *) malloc(strlen($1) + strlen($3) + 4);
+        sprintf($$, "%s == %s", $1, $3); // En Python se usa '==' para la igualdad
+    }
+    | value NE value
+    {
+        $$ = (char *) malloc(strlen($1) + strlen($3) + 5);
+        sprintf($$, "%s != %s", $1, $3); // En Python se usa '!=' para desigualdad
     }
 ;
 

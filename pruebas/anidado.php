@@ -18,13 +18,6 @@ if ($x < $y) {
 } else {
     if (3 != 8) {
         echo "Corresponde";
-    } else {
-        echo "No corresponde";
-    }
-    if (3 == 8) {
-        echo "Corresponde";
-    } else {
-        echo "No Corresponde";
     }
 }
 ?>

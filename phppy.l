@@ -40,6 +40,7 @@ extern void yyerror(const char *s);
 "<"                         { return LT; }
 "<="                        { return LE; }
 "=="                        { return EQ; }
+"!="                        { return NE; }
 "++"                        { return INCREMENT; }
 ":"                         { return COLON; }
 ","                         { return COMMA; }
