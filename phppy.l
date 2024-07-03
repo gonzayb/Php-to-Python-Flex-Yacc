@@ -25,11 +25,14 @@ extern void yyerror(const char *s);
 "while"                     { return WHILE; }
 "endwhile"                  { return ENDWHILE; }
 "echo"                      { return ECHO_TOKEN; }
+"function"                  { return FUNCTION; }
+"return"                    { return RETURN; }
 "$"[a-zA-Z_][a-zA-Z0-9_]*   { yylval.strval = strdup(yytext); return VARIABLE; }
 [0-9]+                      { yylval.strval = strdup(yytext); return INTEGER; }
 [0-9]+\.[0-9]+              { yylval.strval = strdup(yytext); return FLOAT; }
 \'[^\']\'                   { yylval.strval = strdup(yytext); return CHAR; }
 \"([^\"\n\\]|\\.)*\"        { yylval.strval = strdup(yytext); return STRING; }
+[a-zA-Z_][a-zA-Z0-9_]*      { yylval.strval = strdup(yytext); return IDENTIFIER; }
 ";"                         { return SEMICOLON; }
 "="                         { return ASSIGN; }
 "("                         { return LPAREN; }

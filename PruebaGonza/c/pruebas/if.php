@@ -1,10 +1,9 @@
 <?php
 
-$x = 3;
-$y = 8;
+$b = $a;
+
 if ($a > $b) {
   echo "a is bigger than b";
-  $b = $a;
 }
 
 

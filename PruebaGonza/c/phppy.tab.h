@@ -65,19 +65,32 @@ extern int yydebug;
     RBRACE = 266,                  /* RBRACE  */
     COMMA = 267,                   /* COMMA  */
     ARRAY = 268,                   /* ARRAY  */
-    IF = 269,                      /* IF  */
-    ECHO_TOKEN = 270,              /* ECHO_TOKEN  */
-    IS_INT = 271,                  /* IS_INT  */
-    IS_STRING = 272,               /* IS_STRING  */
-    IS_ARRAY = 273,                /* IS_ARRAY  */
-    IS_FLOAT = 274,                /* IS_FLOAT  */
-    IS_BOOL = 275,                 /* IS_BOOL  */
-    VARIABLE = 276,                /* VARIABLE  */
-    INTEGER = 277,                 /* INTEGER  */
-    FLOAT = 278,                   /* FLOAT  */
-    CHAR = 279,                    /* CHAR  */
-    STRING = 280,                  /* STRING  */
-    BOOL = 281                     /* BOOL  */
+    GT = 269,                      /* GT  */
+    LT = 270,                      /* LT  */
+    EQ = 271,                      /* EQ  */
+    COLON = 272,                   /* COLON  */
+    LE = 273,                      /* LE  */
+    IF = 274,                      /* IF  */
+    ELSEIF = 275,                  /* ELSEIF  */
+    ELSE = 276,                    /* ELSE  */
+    ECHO_TOKEN = 277,              /* ECHO_TOKEN  */
+    IS_INT = 278,                  /* IS_INT  */
+    IS_STRING = 279,               /* IS_STRING  */
+    IS_ARRAY = 280,                /* IS_ARRAY  */
+    IS_FLOAT = 281,                /* IS_FLOAT  */
+    IS_BOOL = 282,                 /* IS_BOOL  */
+    WHILE = 283,                   /* WHILE  */
+    ENDWHILE = 284,                /* ENDWHILE  */
+    INCREMENT = 285,               /* INCREMENT  */
+    RETURN = 286,                  /* RETURN  */
+    FUNCTION = 287,                /* FUNCTION  */
+    VARIABLE = 288,                /* VARIABLE  */
+    INTEGER = 289,                 /* INTEGER  */
+    FLOAT = 290,                   /* FLOAT  */
+    CHAR = 291,                    /* CHAR  */
+    STRING = 292,                  /* STRING  */
+    BOOL = 293,                    /* BOOL  */
+    IDENTIFIER = 294               /* IDENTIFIER  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -86,11 +99,11 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 82 "phppy.y"
+#line 140 "phppy.y"
 
     char *strval;
 
-#line 94 "phppy.tab.h"
+#line 107 "phppy.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

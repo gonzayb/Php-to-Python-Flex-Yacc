@@ -1,15 +1,7 @@
-integerVar = 42
-stringVar = "Hello, world!"
-arrayVar = [1, 2, 3]
-floatVar = 3.14
-boolVar = True
-if isinstance(integerVar, object):
-    print(integerVar, "\\$integerVar es un entero.")
-if isinstance(stringVar, object):
-    print(stringVar, "\\$stringVar es una cadena de texto.")
-if isinstance(arrayVar, object):
-    print(arrayVar, "\\$arrayVar es un array.")
-if isinstance(floatVar, object):
-    print(floatVar, "\\$floatVar es un número de punto flotante.")
-if isinstance(boolVar, object):
-    print(boolVar, "\\$boolVar es un booleano.")
+def foo(arg_1, arg_2, arg_n):
+    print("Example function.\n")
+    return retval
+def recursion(a):
+    if (a < 20):
+        print("$a\n")
+        recursion(a)

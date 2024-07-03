@@ -20,18 +20,31 @@ extern void yyerror(const char *s);
 "is_float"                  { return IS_FLOAT; }
 "is_bool"                   { return IS_BOOL; }
 "if"                        { return IF; }
+"else"                      { return ELSE; }
+"elseif"                    { return ELSEIF; }
+"while"                     { return WHILE; }
+"endwhile"                  { return ENDWHILE; }
+"function"                  { return FUNCTION; }
+"return"                    { return RETURN; }
 "echo"                      { return ECHO_TOKEN; }
 "$"[a-zA-Z_][a-zA-Z0-9_]*   { yylval.strval = strdup(yytext); return VARIABLE; }
 [0-9]+                      { yylval.strval = strdup(yytext); return INTEGER; }
 [0-9]+\.[0-9]+              { yylval.strval = strdup(yytext); return FLOAT; }
 \'[^\']\'                   { yylval.strval = strdup(yytext); return CHAR; }
 \"([^\"\n\\]|\\.)*\"        { yylval.strval = strdup(yytext); return STRING; }
+[a-zA-Z_][a-zA-Z0-9_]*      { yylval.strval = strdup(yytext); return IDENTIFIER; }
 ";"                         { return SEMICOLON; }
 "="                         { return ASSIGN; }
 "("                         { return LPAREN; }
 ")"                         { return RPAREN; }
 "{"                         { return LBRACE; }
 "}"                         { return RBRACE; }
+">"                         { return GT; }
+"<"                         { return LT; }
+"<="                        { return LE; }
+"=="                        { return EQ; }
+"++"                        { return INCREMENT; }
+":"                         { return COLON; }
 ","                         { return COMMA; }
 [ \t\n]                     ; // Ignore whitespace
 "//".*                      ; // Ignore single-line comments
