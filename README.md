@@ -1,45 +1,41 @@
-# Php-to-Python-Flex-Yacc
-Compilar phptopython.l
+# Php to Python Transpiler
+## Using Flex and Bison
 
-flex phptopython.l
+### Instrucciones de Uso
+#### Compilar phptopython.l
+
+> flex phptopython.l
+
+#### Compilar phppy.y
+
+> bison -d phppy.y
+
+#### Compilar el lex.yy.c y phppy.tab.c
+
+> gcc -o phptopython lex.yy.c phppy.tab.c -lfl
 
 
-Compilar phppy.y
+#### Ejecutar pruebas
+> ./phptopython < ./pruebas/\[nombre de la prueba].php > \[nombre de la prueba].py
 
-bison -d phppy.y
-
-Compilar el lex.yy.c y phppy.tab.c
-
-gcc -o phptopython lex.yy.c phppy.tab.c -lfl
-
-
-ejecutar pruebas
-./phptopython < ./pruebas/[nombre de la prueba].php > 
-
-┌──(kali㉿kali)-[~/…/Compiladores/Php-to-Python-Flex-Yacc]
-└─$ flex phppy.l
-┌──(kali㉿kali)-[~/…/Compiladores/Php-to-Python-Flex-Yacc/PruebaGonza/c]
-└─$ bison -d phppy.y 
-┌──(kali㉿kali)-[~/Documents/Compiladores/Php-to-Python-Flex-Yacc]
-└─$ gcc -o phptopython lex.yy.c phppy.tab.c -lfl
-
-┌──(kali㉿kali)-[~/Documents/Compiladores/Php-to-Python-Flex-Yacc]
-└─$ ./phptopython < ./pruebas/declaraciones.php > ./resultados/declaraciones.py
-┌──(kali㉿kali)-[~/Documents/Compiladores/Php-to-Python-Flex-Yacc]
-└─$ ./phptopython < ./pruebas/constantes.php > ./resultados/constantes.py      
-┌──(kali㉿kali)-[~/Documents/Compiladores/Php-to-Python-Flex-Yacc]
-└─$ ./phptopython < ./pruebas/vectores.php > ./resultados/vectores.py
-┌──(kali㉿kali)-[~/Documents/Compiladores/Php-to-Python-Flex-Yacc]
-└─$ ./phptopython < ./pruebas/arraymultidimensional.php > ./resultados/arraymultidimensional.py
-┌──(kali㉿kali)-[~/Documents/Compiladores/Php-to-Python-Flex-Yacc]
-└─$ ./phptopython < ./pruebas/comprobaciontipos.php > ./resultados/comprobaciontipos.py    
-┌──(kali㉿kali)-[~/Documents/Compiladores/Php-to-Python-Flex-Yacc]
-└─$ ./phptopython < ./pruebas/if.php > ./resultados/if.py             
-┌──(kali㉿kali)-[~/Documents/Compiladores/Php-to-Python-Flex-Yacc]
-└─$ ./phptopython < ./pruebas/while.php > ./resultados/while.py
-┌──(kali㉿kali)-[~/Documents/Compiladores/Php-to-Python-Flex-Yacc]
-└─$ ./phptopython < ./pruebas/funciones.php > ./resultados/funciones.py
-┌──(kali㉿kali)-[~/Documents/Compiladores/Php-to-Python-Flex-Yacc]
-└─$ ./phptopython < ./pruebas/anidado.php > ./resultados/anidado.py  
-┌──(kali㉿kali)-[~/Documents/Compiladores/Php-to-Python-Flex-Yacc]
-└─$ ./phptopython < ./pruebas/ambito.php > ./resultados/ambito.py
+### Ejemplos:
+  
+> └─$ ./phptopython < ./pruebas/declaraciones.php > ./resultados/declaraciones.py
+>
+>  └─$ ./phptopython < ./pruebas/constantes.php > ./resultados/constantes.py
+>  
+>  └─$ ./phptopython < ./pruebas/vectores.php > ./resultados/vectores.py
+>  
+>  └─$ ./phptopython < ./pruebas/arraymultidimensional.php > ./resultados/arraymultidimensional.py
+>  
+>  └─$ ./phptopython < ./pruebas/comprobaciontipos.php > ./resultados/comprobaciontipos.py
+>  
+>  └─$ ./phptopython < ./pruebas/if.php > ./resultados/if.py
+>  
+>  └─$ ./phptopython < ./pruebas/while.php > ./resultados/while.py
+>  
+>  └─$ ./phptopython < ./pruebas/funciones.php > ./resultados/funciones.py
+>  
+>  └─$ ./phptopython < ./pruebas/anidado.php > ./resultados/anidado.py
+>  
+>  └─$ ./phptopython < ./pruebas/ambito.php > ./resultados/ambito.py
