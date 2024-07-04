@@ -39,6 +39,9 @@ extern void yyerror(const char *s);
 ")"                         { return RPAREN; }
 "{"                         { return LBRACE; }
 "}"                         { return RBRACE; }
+"=>"                        { return ARROW; }
+"["                         { return LBRACKET; }
+"]"                         { return RBRACKET; }
 ">"                         { return GT; }
 "<"                         { return LT; }
 "<="                        { return LE; }

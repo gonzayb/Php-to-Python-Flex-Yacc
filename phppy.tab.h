@@ -71,27 +71,30 @@ extern int yydebug;
     COLON = 272,                   /* COLON  */
     LE = 273,                      /* LE  */
     NE = 274,                      /* NE  */
-    IF = 275,                      /* IF  */
-    ELSEIF = 276,                  /* ELSEIF  */
-    ELSE = 277,                    /* ELSE  */
-    ECHO_TOKEN = 278,              /* ECHO_TOKEN  */
-    IS_INT = 279,                  /* IS_INT  */
-    IS_STRING = 280,               /* IS_STRING  */
-    IS_ARRAY = 281,                /* IS_ARRAY  */
-    IS_FLOAT = 282,                /* IS_FLOAT  */
-    IS_BOOL = 283,                 /* IS_BOOL  */
-    WHILE = 284,                   /* WHILE  */
-    ENDWHILE = 285,                /* ENDWHILE  */
-    INCREMENT = 286,               /* INCREMENT  */
-    RETURN = 287,                  /* RETURN  */
-    FUNCTION = 288,                /* FUNCTION  */
-    VARIABLE = 289,                /* VARIABLE  */
-    INTEGER = 290,                 /* INTEGER  */
-    FLOAT = 291,                   /* FLOAT  */
-    CHAR = 292,                    /* CHAR  */
-    STRING = 293,                  /* STRING  */
-    BOOL = 294,                    /* BOOL  */
-    IDENTIFIER = 295               /* IDENTIFIER  */
+    ARROW = 275,                   /* ARROW  */
+    LBRACKET = 276,                /* LBRACKET  */
+    RBRACKET = 277,                /* RBRACKET  */
+    IF = 278,                      /* IF  */
+    ELSEIF = 279,                  /* ELSEIF  */
+    ELSE = 280,                    /* ELSE  */
+    ECHO_TOKEN = 281,              /* ECHO_TOKEN  */
+    IS_INT = 282,                  /* IS_INT  */
+    IS_STRING = 283,               /* IS_STRING  */
+    IS_ARRAY = 284,                /* IS_ARRAY  */
+    IS_FLOAT = 285,                /* IS_FLOAT  */
+    IS_BOOL = 286,                 /* IS_BOOL  */
+    WHILE = 287,                   /* WHILE  */
+    ENDWHILE = 288,                /* ENDWHILE  */
+    INCREMENT = 289,               /* INCREMENT  */
+    RETURN = 290,                  /* RETURN  */
+    FUNCTION = 291,                /* FUNCTION  */
+    VARIABLE = 292,                /* VARIABLE  */
+    INTEGER = 293,                 /* INTEGER  */
+    FLOAT = 294,                   /* FLOAT  */
+    CHAR = 295,                    /* CHAR  */
+    STRING = 296,                  /* STRING  */
+    BOOL = 297,                    /* BOOL  */
+    IDENTIFIER = 298               /* IDENTIFIER  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -104,7 +107,7 @@ union YYSTYPE
 
     char *strval;
 
-#line 108 "phppy.tab.h"
+#line 111 "phppy.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

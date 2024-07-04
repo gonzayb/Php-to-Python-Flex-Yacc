@@ -551,7 +551,7 @@ key_value_list: key_value_pair
 
 key_value_pair: STRING ARROW value
 {
-    char *key = strip_quotes($1);
+    char *key = $1;
     char *result = malloc(strlen(key) + strlen($3) + 4);
     sprintf(result, "%s: %s", key, $3);
     free(key);
@@ -662,6 +662,12 @@ array_declaration: ARRAY LPAREN array_items RPAREN
 {
     char *result = malloc(strlen($3) + 3);
     sprintf(result, "{%s}", $3);
+    $$ = result;
+}
+| LBRACKET array_items RBRACKET
+{
+    char *result = malloc(strlen($2) + 3);
+    sprintf(result, "{%s}", $2);
     $$ = result;
 }
 ;

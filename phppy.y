@@ -141,10 +141,10 @@ char* replace_dollar(const char* str) {
     char *strval;
 }
 
-%token PHP_START PHP_END SEMICOLON ASSIGN DEFINE LPAREN RPAREN LBRACE RBRACE COMMA ARRAY GT LT EQ COLON LE NE
+%token PHP_START PHP_END SEMICOLON ASSIGN DEFINE LPAREN RPAREN LBRACE RBRACE COMMA ARRAY GT LT EQ COLON LE NE ARROW LBRACKET RBRACKET
 %token IF ELSEIF ELSE ECHO_TOKEN IS_INT IS_STRING IS_ARRAY IS_FLOAT IS_BOOL WHILE ENDWHILE INCREMENT RETURN FUNCTION
 %token <strval> VARIABLE INTEGER FLOAT CHAR STRING BOOL IDENTIFIER
-%type <strval> value array_value value_list statements statement condicion variable_assignment echo_statement if_statement variable_declaration constant_declaration elseif_clauses elseif_clause else_clause while_statement function_declaration parameter_list function_call argument_list
+%type <strval> value array_value value_list statements statement condicion variable_assignment echo_statement if_statement variable_declaration constant_declaration elseif_clauses elseif_clause else_clause while_statement function_declaration parameter_list function_call argument_list key_value_list key_value_pair array_declaration array_item array_items
 
 %%
 
@@ -230,6 +230,13 @@ variable_assignment: VARIABLE ASSIGN value SEMICOLON
     //printf("DEBUG: variable_increment - var_name = '%s'\n", var_name);
     char *result = malloc(strlen(var_name) + 7); // Tamaño necesario para " += 1\n" y terminador nulo
     sprintf(result, "%s += 1\n", var_name);
+    $$ = result;
+}
+| VARIABLE ASSIGN array_declaration SEMICOLON
+{
+    char *var_name = $1 + 1;  // Skip the '$' character
+    char *result = malloc(strlen(var_name) + strlen($3) + 5);
+    sprintf(result, "%s = %s\n", var_name, $3);
     $$ = result;
 }
 ;
@@ -490,12 +497,70 @@ value: INTEGER { $$ = $1; }
     | STRING { $$ = $1; }
     | BOOL { $$ = $1; }
     | array_value { $$ = $1; }
+    | VARIABLE LBRACKET value RBRACKET
+    {
+        char *result = malloc(strlen($1) + strlen($3) + 4);
+        sprintf(result, "%s[%s]", $1 + 1, $3);  // Skip the '$' character
+        $$ = result;
+    }
+    | VARIABLE LBRACKET STRING RBRACKET
+    {
+        char *key = strip_quotes($3);
+        char *result = malloc(strlen($1) + strlen(key) + 4);
+        sprintf(result, "%s[%s]", $1 + 1, key);  // Skip the '$' character
+        free(key);
+        $$ = result;
+    }
 ;
 
-array_value: ARRAY LPAREN value_list RPAREN
+array_value: ARRAY LPAREN RPAREN
+{
+    $$ = strdup("{}");
+}
+| ARRAY LPAREN value_list RPAREN
 {
     char *result = malloc(strlen($3) + 3);
     sprintf(result, "[%s]", $3);
+    $$ = result;
+}
+| ARRAY LPAREN key_value_list RPAREN
+{
+    char *result = malloc(strlen($3) + 3);
+    sprintf(result, "{%s}", $3);
+    $$ = result;
+}
+| ARRAY LPAREN key_value_pair RPAREN
+{
+    char *result = malloc(strlen($3) + 3);
+    sprintf(result, "{%s}", $3);
+    $$ = result;
+}
+;
+
+key_value_list: key_value_pair
+{
+    $$ = $1;
+}
+| key_value_list COMMA key_value_pair
+{
+    char *result = malloc(strlen($1) + strlen($3) + 2);
+    sprintf(result, "%s, %s", $1, $3);
+    $$ = result;
+}
+;
+
+key_value_pair: STRING ARROW value
+{
+    char *key = $1;
+    char *result = malloc(strlen(key) + strlen($3) + 4);
+    sprintf(result, "%s: %s", key, $3);
+    free(key);
+    $$ = result;
+}
+| IDENTIFIER ARROW value
+{
+    char *result = malloc(strlen($1) + strlen($3) + 4);
+    sprintf(result, "\"%s\": %s", $1, $3);
     $$ = result;
 }
 ;
@@ -589,6 +654,57 @@ argument_list: /* empty */
 {
     char *result = malloc(strlen($1) + strlen($3) + 2);
     sprintf(result, "%s, %s", $1, $3);
+    $$ = result;
+}
+;
+
+array_declaration: ARRAY LPAREN array_items RPAREN
+{
+    char *result = malloc(strlen($3) + 3);
+    sprintf(result, "{%s}", $3);
+    $$ = result;
+}
+| LBRACKET array_items RBRACKET
+{
+    char *result = malloc(strlen($2) + 3);
+    sprintf(result, "{%s}", $2);
+    $$ = result;
+}
+;
+
+array_items: array_item
+    | array_items COMMA array_item
+    {
+        char *result = malloc(strlen($1) + strlen($3) + 3);
+        sprintf(result, "%s, %s", $1, $3);
+        $$ = result;
+    }
+    ;
+
+array_item: STRING ARROW array_declaration
+{
+    char *key = strip_quotes($1);
+    char *result = malloc(strlen(key) + strlen($3) + 5);
+    sprintf(result, "\"%s\": %s", key, $3);
+    free(key);
+    $$ = result;
+}
+| STRING ARROW STRING
+{
+    char *key = strip_quotes($1);
+    char *value = strip_quotes($3);
+    char *result = malloc(strlen(key) + strlen(value) + 5);
+    sprintf(result, "\"%s\": \"%s\"", key, value);
+    free(key);
+    free(value);
+    $$ = result;
+}
+| STRING ARROW INTEGER
+{
+    char *key = strip_quotes($1);
+    char *result = malloc(strlen(key) + strlen($3) + 5);
+    sprintf(result, "\"%s\": %s", key, $3);
+    free(key);
     $$ = result;
 }
 ;
