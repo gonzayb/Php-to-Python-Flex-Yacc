@@ -1,0 +1,9 @@
+a = None
+b = 1
+c = None
+d = 2.5
+e = None
+f = 0.001
+g = None
+i = 'a'
+p = 'b'

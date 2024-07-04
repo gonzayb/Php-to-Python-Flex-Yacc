@@ -25,6 +25,7 @@ extern void yyerror(const char *s);
 "while"                     { return WHILE; }
 "endwhile"                  { return ENDWHILE; }
 "echo"                      { return ECHO_TOKEN; }
+"global"                    { return GLOBAL; }
 "function"                  { return FUNCTION; }
 "return"                    { return RETURN; }
 "$"[a-zA-Z_][a-zA-Z0-9_]*   { yylval.strval = strdup(yytext); return VARIABLE; }
@@ -33,6 +34,7 @@ extern void yyerror(const char *s);
 \'[^\']\'                   { yylval.strval = strdup(yytext); return CHAR; }
 \"([^\"\n\\]|\\.)*\"        { yylval.strval = strdup(yytext); return STRING; }
 [a-zA-Z_][a-zA-Z0-9_]*      { yylval.strval = strdup(yytext); return IDENTIFIER; }
+"+"                         { return PLUS; }
 ";"                         { return SEMICOLON; }
 "="                         { return ASSIGN; }
 "("                         { return LPAREN; }

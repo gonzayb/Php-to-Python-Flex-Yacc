@@ -142,9 +142,10 @@ char* replace_dollar(const char* str) {
 }
 
 %token PHP_START PHP_END SEMICOLON ASSIGN DEFINE LPAREN RPAREN LBRACE RBRACE COMMA ARRAY GT LT EQ COLON LE NE ARROW LBRACKET RBRACKET
-%token IF ELSEIF ELSE ECHO_TOKEN IS_INT IS_STRING IS_ARRAY IS_FLOAT IS_BOOL WHILE ENDWHILE INCREMENT RETURN FUNCTION
+%token IF ELSEIF ELSE ECHO_TOKEN IS_INT IS_STRING IS_ARRAY IS_FLOAT IS_BOOL WHILE ENDWHILE INCREMENT RETURN FUNCTION GLOBAL PLUS
 %token <strval> VARIABLE INTEGER FLOAT CHAR STRING BOOL IDENTIFIER
-%type <strval> value array_value value_list statements statement condicion variable_assignment echo_statement if_statement variable_declaration constant_declaration elseif_clauses elseif_clause else_clause while_statement function_declaration parameter_list function_call argument_list key_value_list key_value_pair array_declaration array_item array_items
+%type <strval> value array_value value_list statements statement condicion variable_assignment echo_statement if_statement variable_declaration constant_declaration elseif_clauses elseif_clause else_clause 
+while_statement function_declaration parameter_list function_call argument_list key_value_list key_value_pair array_declaration array_item array_items global_statement variable_list expression
 
 %%
 
@@ -186,6 +187,7 @@ statement: variable_assignment
     | echo_statement
     | function_declaration
     | function_call
+    | global_statement
     | error SEMICOLON { yyerrok; }
     ;
 
@@ -239,7 +241,23 @@ variable_assignment: VARIABLE ASSIGN value SEMICOLON
     sprintf(result, "%s = %s\n", var_name, $3);
     $$ = result;
 }
+| VARIABLE ASSIGN expression SEMICOLON
+{
+    char *var_name = $1 + 1;
+    char *result = malloc(strlen(var_name) + strlen($3) + 5);
+    sprintf(result, "%s = %s\n", var_name, $3);
+    $$ = result;
+}
 ;
+
+expression: VARIABLE PLUS VARIABLE
+{
+    char *result = malloc(strlen($1) + strlen($3) + 4); // 4 for " + " and '\0'
+    sprintf(result, "%s + %s", $1 +1, $3 + 1);
+    $$ = result;
+}
+;
+
 
 echo_statement: ECHO_TOKEN value SEMICOLON
 {
@@ -263,6 +281,25 @@ echo_statement: ECHO_TOKEN value SEMICOLON
 }
 ;
 
+global_statement: GLOBAL variable_list SEMICOLON
+{
+    char *result = malloc(strlen($2) + 8); // 8 bytes para "global " y '\0'
+    sprintf(result, "global %s\n", $2);
+    $$ = result;
+}
+;
+
+variable_list: VARIABLE
+{
+    $$ = $1 + 1; // Omitimos el carácter '$'
+}
+| variable_list COMMA VARIABLE
+{
+    char *result = malloc(strlen($1) + strlen($3 + 1) + 3); // 3 para ", " y '\0'
+    sprintf(result, "%s, %s", $1, $3 + 1); // Omitimos el carácter '$'
+    $$ = result;
+}
+;
 
 
 constant_declaration: DEFINE LPAREN STRING COMMA value RPAREN SEMICOLON

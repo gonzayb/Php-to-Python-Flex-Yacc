@@ -88,13 +88,15 @@ extern int yydebug;
     INCREMENT = 289,               /* INCREMENT  */
     RETURN = 290,                  /* RETURN  */
     FUNCTION = 291,                /* FUNCTION  */
-    VARIABLE = 292,                /* VARIABLE  */
-    INTEGER = 293,                 /* INTEGER  */
-    FLOAT = 294,                   /* FLOAT  */
-    CHAR = 295,                    /* CHAR  */
-    STRING = 296,                  /* STRING  */
-    BOOL = 297,                    /* BOOL  */
-    IDENTIFIER = 298               /* IDENTIFIER  */
+    GLOBAL = 292,                  /* GLOBAL  */
+    PLUS = 293,                    /* PLUS  */
+    VARIABLE = 294,                /* VARIABLE  */
+    INTEGER = 295,                 /* INTEGER  */
+    FLOAT = 296,                   /* FLOAT  */
+    CHAR = 297,                    /* CHAR  */
+    STRING = 298,                  /* STRING  */
+    BOOL = 299,                    /* BOOL  */
+    IDENTIFIER = 300               /* IDENTIFIER  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -107,7 +109,7 @@ union YYSTYPE
 
     char *strval;
 
-#line 111 "phppy.tab.h"
+#line 113 "phppy.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
