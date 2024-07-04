@@ -16,7 +16,7 @@
 
 
 #### Ejecutar pruebas
-> ./phptopython < ./pruebas/\[nombre de la prueba].php > \[nombre de la prueba].py
+> ./phptopython < ./pruebas/\[nombre de la prueba].**php** > ./pruebas/\[nombre de la prueba].**py**
 
 ### Ejemplos:
   
