@@ -158,11 +158,14 @@ char* replace_dollar(const char* str) {
 
 // Declaración de tokens
 %token PHP_START PHP_END SEMICOLON ASSIGN DEFINE LPAREN RPAREN LBRACE RBRACE COMMA ARRAY GT LT EQ COLON LE NE ARROW LBRACKET RBRACKET
-%token IF ELSEIF ELSE ECHO_TOKEN IS_INT IS_STRING IS_ARRAY IS_FLOAT IS_BOOL WHILE ENDWHILE INCREMENT RETURN FUNCTION GLOBAL PLUS
+%token IF ELSEIF ELSE ECHO_TOKEN IS_INT IS_STRING IS_ARRAY IS_FLOAT IS_BOOL WHILE ENDWHILE INCREMENT RETURN FUNCTION GLOBAL PLUS CLASS NEW PUBLIC PROTECTED PRIVATE ARROW_OBJ
 %token <strval> VARIABLE INTEGER FLOAT CHAR STRING BOOL IDENTIFIER
 
 // Declaración de tipos para las producciones
-%type <strval> value array_value value_list statements statement condicion variable_assignment echo_statement if_statement variable_declaration constant_declaration elseif_clauses elseif_clause else_clause while_statement function_declaration parameter_list function_call argument_list key_value_list key_value_pair array_declaration array_item array_items global_statement variable_list expression
+%type <strval> value array_value value_list statements statement condicion variable_assignment echo_statement if_statement variable_declaration 
+constant_declaration elseif_clauses elseif_clause else_clause while_statement function_declaration parameter_list function_call argument_list 
+key_value_list key_value_pair array_declaration array_item array_items global_statement variable_list expression class_declaration class_body 
+class_method class_member class_property object_creation
 
 
 %%
@@ -206,6 +209,9 @@ statement: variable_assignment  // Asignación de una variable
     | function_declaration  // Declaración de una función
     | function_call  // Llamada a una función
     | global_statement  // Declaración de variables globales
+    | class_declaration // Declaracion de una clase
+    | object_creation // Creacion de objeto
+    | expression SEMICOLON // Expresion sola
     | error SEMICOLON { yyerrok; }  // Manejo de errores
     ;
 
@@ -276,7 +282,16 @@ expression: VARIABLE PLUS VARIABLE  // Suma de dos variables
     sprintf(result, "%s + %s", $1 + 1, $3 + 1);  // Omite el carácter '$' y suma las variables
     $$ = result;  // Almacena la expresión
 }
+| VARIABLE ARROW_OBJ IDENTIFIER LPAREN RPAREN
+{
+    char *var_name = $1 + 1;  // Omite el carácter '$'
+    char *method_name = $3;
+    char *result = malloc(strlen(var_name) + strlen(method_name) + 4);
+    sprintf(result, "%s.%s()\n", var_name, method_name);
+    $$ = result;
+}
 ;
+
 
 // Definición de la sentencia 'echo'
 echo_statement: ECHO_TOKEN value SEMICOLON  // Sentencia 'echo' con un valor
@@ -299,7 +314,33 @@ echo_statement: ECHO_TOKEN value SEMICOLON  // Sentencia 'echo' con un valor
     sprintf(result, "print(%s)\n%s += 1\n", var_name, var_name);  // Imprime e incrementa la variable
     $$ = result;  // Almacena la sentencia 'echo'
 }
+| ECHO_TOKEN VARIABLE ARROW_OBJ PUBLIC SEMICOLON
+{
+    char *var_name = $2 + 1;  // Omite el carácter '$'
+    char *property_name = "public";
+    char *result = malloc(strlen(var_name) + strlen(property_name) + 10);
+    sprintf(result, "print(self.%s)\n", property_name);
+    $$ = result;
+}
+| ECHO_TOKEN VARIABLE ARROW_OBJ PROTECTED SEMICOLON
+{
+    char *var_name = $2 + 1;  // Omite el carácter '$'
+    char *property_name = "_protected";
+    char *result = malloc(strlen(var_name) + strlen(property_name) + 10);
+    sprintf(result, "print(self.%s)\n", property_name);
+    $$ = result;
+}
+| ECHO_TOKEN VARIABLE ARROW_OBJ PRIVATE SEMICOLON
+{
+    char *var_name = $2 + 1;  // Omite el carácter '$'
+    char *property_name = "__private";
+    char *result = malloc(strlen(var_name) + strlen(property_name) + 10);
+    sprintf(result, "print(self.%s)\n", property_name);
+    $$ = result;
+}
 ;
+
+
 
 // Definición de la sentencia 'global'
 global_statement: GLOBAL variable_list SEMICOLON  // Sentencia 'global' con una lista de variables
@@ -364,7 +405,10 @@ if_statement: IF LPAREN type_check_func LPAREN VARIABLE RPAREN RPAREN LBRACE ECH
     char *unquoted = strip_quotes($10);  // Elimina las comillas de la cadena
     char *message = replace_dollar(unquoted);  // Reemplaza los caracteres '$' en la cadena
     char *formatted_message = remove_newlines(message);  // Elimina los saltos de línea y formatea el mensaje
-    printf("if isinstance(%s, %s):\n    print(%s, \"\\%s\")\n", $5 + 1, py_type, $5 + 1, formatted_message);  // Imprime la sentencia 'if' en Python
+    char *result = malloc(strlen($5 + 1) + strlen(py_type) + strlen(formatted_message) + 50); // Asegura suficiente espacio para el resultado
+    sprintf(result, "if isinstance(%s, %s):\n    print(\"%s\")\n", $5 + 1, py_type, formatted_message);  // Imprime la sentencia 'if' en Python
+    $$ = result;  // Asigna el resultado a la regla
+    
     free(unquoted);  // Libera la memoria de 'unquoted'
     free(message);  // Libera la memoria de 'message'
     free(formatted_message);  // Libera la memoria de 'formatted_message'
@@ -756,6 +800,82 @@ array_item: STRING ARROW array_declaration
     $$ = result;  // Asigna el resultado formateado
 }
 ;
+
+class_declaration: CLASS IDENTIFIER LBRACE class_body RBRACE
+{
+    char *class_name = $2;  
+    char *result = malloc(strlen(class_name) + strlen($4) + 20);
+    sprintf(result, "class %s:\n%s", class_name, $4);
+    $$ = result;
+}
+;
+
+class_body: class_member
+    | class_body class_member
+{
+    char *result = malloc(strlen($1) + strlen($2) + 1);
+    sprintf(result, "%s%s", $1, $2);
+    $$ = result;
+}
+;
+
+class_member: class_property
+    | class_method
+;
+
+class_property: PUBLIC VARIABLE ASSIGN value SEMICOLON
+{
+    char *property_name = $2 + 1;  // Omite el carácter '$'
+    char *result = malloc(strlen(property_name) + strlen($4) + 30);
+    sprintf(result, "    def __init__(self):\n        self.%s = %s\n", property_name, $4);
+    $$ = result;
+}
+| PROTECTED VARIABLE ASSIGN value SEMICOLON
+{
+    char *property_name = $2 + 1;  // Omite el carácter '$' y añade un guion bajo
+    char *result = malloc(strlen(property_name) + strlen($4) + 31);
+    sprintf(result, "        self._%s = %s\n", property_name, $4);
+    $$ = result;
+}
+| PRIVATE VARIABLE ASSIGN value SEMICOLON
+{
+    char *property_name = $2 + 1;  // Omite el carácter '$' y añade dos guiones bajos
+    char *result = malloc(strlen(property_name) + strlen($4) + 32);
+    sprintf(result, "        self.__%s = %s\n", property_name, $4);
+    $$ = result;
+}
+;
+
+class_method: PUBLIC FUNCTION IDENTIFIER LPAREN RPAREN LBRACE statements RBRACE
+{
+    char *method_name = $3;  
+    char *indented_statements = indent_code(indent_code($7));
+    char *result = malloc(strlen(method_name) + strlen(indented_statements) + 20);
+    sprintf(result, "    def %s(self):\n%s", method_name, indented_statements);
+    $$ = result;
+    free(indented_statements);
+}
+| FUNCTION IDENTIFIER LPAREN RPAREN LBRACE statements RBRACE
+{
+    char *method_name = $2;  
+    char *indented_statements = indent_code(indent_code($6));
+    char *result = malloc(strlen(method_name) + strlen(indented_statements) + 20);
+    sprintf(result, "    def %s(self):\n%s", method_name, indented_statements);
+    $$ = result;
+    free(indented_statements);
+}
+;
+
+object_creation: VARIABLE ASSIGN NEW IDENTIFIER LPAREN RPAREN SEMICOLON
+{
+    char *var_name = $1 + 1;  // Omite el carácter '$'
+    char *class_name = $4;
+    char *result = malloc(strlen(var_name) + strlen(class_name) + 10);
+    sprintf(result, "%s = %s()\n", var_name, class_name);
+    $$ = result;
+}
+;
+
 
 %%
 

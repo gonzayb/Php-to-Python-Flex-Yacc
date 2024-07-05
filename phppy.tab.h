@@ -90,13 +90,19 @@ extern int yydebug;
     FUNCTION = 291,                /* FUNCTION  */
     GLOBAL = 292,                  /* GLOBAL  */
     PLUS = 293,                    /* PLUS  */
-    VARIABLE = 294,                /* VARIABLE  */
-    INTEGER = 295,                 /* INTEGER  */
-    FLOAT = 296,                   /* FLOAT  */
-    CHAR = 297,                    /* CHAR  */
-    STRING = 298,                  /* STRING  */
-    BOOL = 299,                    /* BOOL  */
-    IDENTIFIER = 300               /* IDENTIFIER  */
+    CLASS = 294,                   /* CLASS  */
+    NEW = 295,                     /* NEW  */
+    PUBLIC = 296,                  /* PUBLIC  */
+    PROTECTED = 297,               /* PROTECTED  */
+    PRIVATE = 298,                 /* PRIVATE  */
+    ARROW_OBJ = 299,               /* ARROW_OBJ  */
+    VARIABLE = 300,                /* VARIABLE  */
+    INTEGER = 301,                 /* INTEGER  */
+    FLOAT = 302,                   /* FLOAT  */
+    CHAR = 303,                    /* CHAR  */
+    STRING = 304,                  /* STRING  */
+    BOOL = 305,                    /* BOOL  */
+    IDENTIFIER = 306               /* IDENTIFIER  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -109,7 +115,7 @@ union YYSTYPE
 
     char *strval;
 
-#line 113 "phppy.tab.h"
+#line 119 "phppy.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
