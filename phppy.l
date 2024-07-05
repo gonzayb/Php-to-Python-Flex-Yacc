@@ -39,6 +39,7 @@ extern void yyerror(const char *s);
 \'[^\']\'                   { yylval.strval = strdup(yytext); return CHAR; }
 \"([^\"\n\\]|\\.)*\"        { yylval.strval = strdup(yytext); return STRING; }
 [a-zA-Z_][a-zA-Z0-9_]*      { yylval.strval = strdup(yytext); return IDENTIFIER; }
+\$[0-9][a-zA-Z0-9_]*        { printf("Error: Invalid variable name '%s'\n", yytext); }
 "+"                         { return PLUS; }
 ";"                         { return SEMICOLON; }
 "="                         { return ASSIGN; }
@@ -58,6 +59,7 @@ extern void yyerror(const char *s);
 "++"                        { return INCREMENT; }
 ":"                         { return COLON; }
 ","                         { return COMMA; }
+"$"                         { return DOLLAR; }
 [ \t\n]                     ; // Ignore whitespace
 "//".*                      ; // Ignore single-line comments
 "/*"                        { BEGIN(ML_COMMENT); }

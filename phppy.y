@@ -11,6 +11,9 @@ extern FILE *yyin;  // Puntero al archivo de entrada para el análisis
 // Función para manejar errores de análisis
 void yyerror(const char *s);
 
+char *error_messages[100];
+int error_count = 0;
+
 // Variable global para almacenar la salida generada
 char *output = NULL;
 
@@ -157,7 +160,7 @@ char* replace_dollar(const char* str) {
 }
 
 // Declaración de tokens
-%token PHP_START PHP_END SEMICOLON ASSIGN DEFINE LPAREN RPAREN LBRACE RBRACE COMMA ARRAY GT LT EQ COLON LE NE ARROW LBRACKET RBRACKET
+%token PHP_START PHP_END SEMICOLON ASSIGN DEFINE LPAREN RPAREN LBRACE RBRACE COMMA ARRAY GT LT EQ COLON LE NE ARROW LBRACKET RBRACKET DOLLAR
 %token IF ELSEIF ELSE ECHO_TOKEN IS_INT IS_STRING IS_ARRAY IS_FLOAT IS_BOOL WHILE ENDWHILE INCREMENT RETURN FUNCTION GLOBAL PLUS CLASS NEW PUBLIC PROTECTED PRIVATE ARROW_OBJ
 %token <strval> VARIABLE INTEGER FLOAT CHAR STRING BOOL IDENTIFIER
 
@@ -197,6 +200,7 @@ statements: statement  // Una sola sentencia
         sprintf(result, "%sreturn %s\n", $1, $3 + 1);  // Omite el carácter '$' de la variable y formatea la sentencia de retorno
         $$ = result;  // Almacena la sentencia de retorno
     }
+    | error SEMICOLON { printf("Error in statements, skipping to next statement.\n"); yyerrok; }
     ;
 
 // Definición de la regla para una sentencia
@@ -223,6 +227,7 @@ variable_declaration: VARIABLE SEMICOLON
     sprintf(result, "%s = None\n", var_name);  // Asigna 'None' a la variable en Python
     $$ = result;  // Almacena la declaración de la variable
 }
+| VARIABLE error { printf("Missing ';' in variable declaration.\n"); yyerrok; }
 ;
 
 // Asignación de una variable
@@ -273,6 +278,7 @@ variable_assignment: VARIABLE ASSIGN value SEMICOLON  // Asignación de un valor
     sprintf(result, "%s = %s\n", var_name, $3);  // Asigna la expresión a la variable
     $$ = result;  // Almacena la asignación
 }
+| VARIABLE ASSIGN value error { printf("Missing ';' in variable assignment.\n"); yyerrok; }
 ;
 
 // Definición de una expresión
@@ -338,6 +344,7 @@ echo_statement: ECHO_TOKEN value SEMICOLON  // Sentencia 'echo' con un valor
     sprintf(result, "print(self.%s)\n", property_name);
     $$ = result;
 }
+| ECHO_TOKEN error { printf("Missing ';' in echo statement.\n"); yyerrok; }
 ;
 
 

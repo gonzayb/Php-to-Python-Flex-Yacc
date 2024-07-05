@@ -81,6 +81,9 @@ extern FILE *yyin;  // Puntero al archivo de entrada para el análisis
 // Función para manejar errores de análisis
 void yyerror(const char *s);
 
+char *error_messages[100];
+int error_count = 0;
+
 // Variable global para almacenar la salida generada
 char *output = NULL;
 
@@ -221,7 +224,7 @@ char* replace_dollar(const char* str) {
 
 // Declaración del parser Bison
 
-#line 225 "phppy.tab.c"
+#line 228 "phppy.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -272,71 +275,72 @@ enum yysymbol_kind_t
   YYSYMBOL_ARROW = 20,                     /* ARROW  */
   YYSYMBOL_LBRACKET = 21,                  /* LBRACKET  */
   YYSYMBOL_RBRACKET = 22,                  /* RBRACKET  */
-  YYSYMBOL_IF = 23,                        /* IF  */
-  YYSYMBOL_ELSEIF = 24,                    /* ELSEIF  */
-  YYSYMBOL_ELSE = 25,                      /* ELSE  */
-  YYSYMBOL_ECHO_TOKEN = 26,                /* ECHO_TOKEN  */
-  YYSYMBOL_IS_INT = 27,                    /* IS_INT  */
-  YYSYMBOL_IS_STRING = 28,                 /* IS_STRING  */
-  YYSYMBOL_IS_ARRAY = 29,                  /* IS_ARRAY  */
-  YYSYMBOL_IS_FLOAT = 30,                  /* IS_FLOAT  */
-  YYSYMBOL_IS_BOOL = 31,                   /* IS_BOOL  */
-  YYSYMBOL_WHILE = 32,                     /* WHILE  */
-  YYSYMBOL_ENDWHILE = 33,                  /* ENDWHILE  */
-  YYSYMBOL_INCREMENT = 34,                 /* INCREMENT  */
-  YYSYMBOL_RETURN = 35,                    /* RETURN  */
-  YYSYMBOL_FUNCTION = 36,                  /* FUNCTION  */
-  YYSYMBOL_GLOBAL = 37,                    /* GLOBAL  */
-  YYSYMBOL_PLUS = 38,                      /* PLUS  */
-  YYSYMBOL_CLASS = 39,                     /* CLASS  */
-  YYSYMBOL_NEW = 40,                       /* NEW  */
-  YYSYMBOL_PUBLIC = 41,                    /* PUBLIC  */
-  YYSYMBOL_PROTECTED = 42,                 /* PROTECTED  */
-  YYSYMBOL_PRIVATE = 43,                   /* PRIVATE  */
-  YYSYMBOL_ARROW_OBJ = 44,                 /* ARROW_OBJ  */
-  YYSYMBOL_VARIABLE = 45,                  /* VARIABLE  */
-  YYSYMBOL_INTEGER = 46,                   /* INTEGER  */
-  YYSYMBOL_FLOAT = 47,                     /* FLOAT  */
-  YYSYMBOL_CHAR = 48,                      /* CHAR  */
-  YYSYMBOL_STRING = 49,                    /* STRING  */
-  YYSYMBOL_BOOL = 50,                      /* BOOL  */
-  YYSYMBOL_IDENTIFIER = 51,                /* IDENTIFIER  */
-  YYSYMBOL_YYACCEPT = 52,                  /* $accept  */
-  YYSYMBOL_program = 53,                   /* program  */
-  YYSYMBOL_statements = 54,                /* statements  */
-  YYSYMBOL_statement = 55,                 /* statement  */
-  YYSYMBOL_variable_declaration = 56,      /* variable_declaration  */
-  YYSYMBOL_variable_assignment = 57,       /* variable_assignment  */
-  YYSYMBOL_expression = 58,                /* expression  */
-  YYSYMBOL_echo_statement = 59,            /* echo_statement  */
-  YYSYMBOL_global_statement = 60,          /* global_statement  */
-  YYSYMBOL_variable_list = 61,             /* variable_list  */
-  YYSYMBOL_constant_declaration = 62,      /* constant_declaration  */
-  YYSYMBOL_if_statement = 63,              /* if_statement  */
-  YYSYMBOL_elseif_clauses = 64,            /* elseif_clauses  */
-  YYSYMBOL_elseif_clause = 65,             /* elseif_clause  */
-  YYSYMBOL_else_clause = 66,               /* else_clause  */
-  YYSYMBOL_while_statement = 67,           /* while_statement  */
-  YYSYMBOL_condicion = 68,                 /* condicion  */
-  YYSYMBOL_type_check_func = 69,           /* type_check_func  */
-  YYSYMBOL_value = 70,                     /* value  */
-  YYSYMBOL_array_value = 71,               /* array_value  */
-  YYSYMBOL_key_value_list = 72,            /* key_value_list  */
-  YYSYMBOL_key_value_pair = 73,            /* key_value_pair  */
-  YYSYMBOL_value_list = 74,                /* value_list  */
-  YYSYMBOL_function_declaration = 75,      /* function_declaration  */
-  YYSYMBOL_parameter_list = 76,            /* parameter_list  */
-  YYSYMBOL_function_call = 77,             /* function_call  */
-  YYSYMBOL_argument_list = 78,             /* argument_list  */
-  YYSYMBOL_array_declaration = 79,         /* array_declaration  */
-  YYSYMBOL_array_items = 80,               /* array_items  */
-  YYSYMBOL_array_item = 81,                /* array_item  */
-  YYSYMBOL_class_declaration = 82,         /* class_declaration  */
-  YYSYMBOL_class_body = 83,                /* class_body  */
-  YYSYMBOL_class_member = 84,              /* class_member  */
-  YYSYMBOL_class_property = 85,            /* class_property  */
-  YYSYMBOL_class_method = 86,              /* class_method  */
-  YYSYMBOL_object_creation = 87            /* object_creation  */
+  YYSYMBOL_DOLLAR = 23,                    /* DOLLAR  */
+  YYSYMBOL_IF = 24,                        /* IF  */
+  YYSYMBOL_ELSEIF = 25,                    /* ELSEIF  */
+  YYSYMBOL_ELSE = 26,                      /* ELSE  */
+  YYSYMBOL_ECHO_TOKEN = 27,                /* ECHO_TOKEN  */
+  YYSYMBOL_IS_INT = 28,                    /* IS_INT  */
+  YYSYMBOL_IS_STRING = 29,                 /* IS_STRING  */
+  YYSYMBOL_IS_ARRAY = 30,                  /* IS_ARRAY  */
+  YYSYMBOL_IS_FLOAT = 31,                  /* IS_FLOAT  */
+  YYSYMBOL_IS_BOOL = 32,                   /* IS_BOOL  */
+  YYSYMBOL_WHILE = 33,                     /* WHILE  */
+  YYSYMBOL_ENDWHILE = 34,                  /* ENDWHILE  */
+  YYSYMBOL_INCREMENT = 35,                 /* INCREMENT  */
+  YYSYMBOL_RETURN = 36,                    /* RETURN  */
+  YYSYMBOL_FUNCTION = 37,                  /* FUNCTION  */
+  YYSYMBOL_GLOBAL = 38,                    /* GLOBAL  */
+  YYSYMBOL_PLUS = 39,                      /* PLUS  */
+  YYSYMBOL_CLASS = 40,                     /* CLASS  */
+  YYSYMBOL_NEW = 41,                       /* NEW  */
+  YYSYMBOL_PUBLIC = 42,                    /* PUBLIC  */
+  YYSYMBOL_PROTECTED = 43,                 /* PROTECTED  */
+  YYSYMBOL_PRIVATE = 44,                   /* PRIVATE  */
+  YYSYMBOL_ARROW_OBJ = 45,                 /* ARROW_OBJ  */
+  YYSYMBOL_VARIABLE = 46,                  /* VARIABLE  */
+  YYSYMBOL_INTEGER = 47,                   /* INTEGER  */
+  YYSYMBOL_FLOAT = 48,                     /* FLOAT  */
+  YYSYMBOL_CHAR = 49,                      /* CHAR  */
+  YYSYMBOL_STRING = 50,                    /* STRING  */
+  YYSYMBOL_BOOL = 51,                      /* BOOL  */
+  YYSYMBOL_IDENTIFIER = 52,                /* IDENTIFIER  */
+  YYSYMBOL_YYACCEPT = 53,                  /* $accept  */
+  YYSYMBOL_program = 54,                   /* program  */
+  YYSYMBOL_statements = 55,                /* statements  */
+  YYSYMBOL_statement = 56,                 /* statement  */
+  YYSYMBOL_variable_declaration = 57,      /* variable_declaration  */
+  YYSYMBOL_variable_assignment = 58,       /* variable_assignment  */
+  YYSYMBOL_expression = 59,                /* expression  */
+  YYSYMBOL_echo_statement = 60,            /* echo_statement  */
+  YYSYMBOL_global_statement = 61,          /* global_statement  */
+  YYSYMBOL_variable_list = 62,             /* variable_list  */
+  YYSYMBOL_constant_declaration = 63,      /* constant_declaration  */
+  YYSYMBOL_if_statement = 64,              /* if_statement  */
+  YYSYMBOL_elseif_clauses = 65,            /* elseif_clauses  */
+  YYSYMBOL_elseif_clause = 66,             /* elseif_clause  */
+  YYSYMBOL_else_clause = 67,               /* else_clause  */
+  YYSYMBOL_while_statement = 68,           /* while_statement  */
+  YYSYMBOL_condicion = 69,                 /* condicion  */
+  YYSYMBOL_type_check_func = 70,           /* type_check_func  */
+  YYSYMBOL_value = 71,                     /* value  */
+  YYSYMBOL_array_value = 72,               /* array_value  */
+  YYSYMBOL_key_value_list = 73,            /* key_value_list  */
+  YYSYMBOL_key_value_pair = 74,            /* key_value_pair  */
+  YYSYMBOL_value_list = 75,                /* value_list  */
+  YYSYMBOL_function_declaration = 76,      /* function_declaration  */
+  YYSYMBOL_parameter_list = 77,            /* parameter_list  */
+  YYSYMBOL_function_call = 78,             /* function_call  */
+  YYSYMBOL_argument_list = 79,             /* argument_list  */
+  YYSYMBOL_array_declaration = 80,         /* array_declaration  */
+  YYSYMBOL_array_items = 81,               /* array_items  */
+  YYSYMBOL_array_item = 82,                /* array_item  */
+  YYSYMBOL_class_declaration = 83,         /* class_declaration  */
+  YYSYMBOL_class_body = 84,                /* class_body  */
+  YYSYMBOL_class_member = 85,              /* class_member  */
+  YYSYMBOL_class_property = 86,            /* class_property  */
+  YYSYMBOL_class_method = 87,              /* class_method  */
+  YYSYMBOL_object_creation = 88            /* object_creation  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -664,19 +668,19 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  27
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   559
+#define YYLAST   581
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  52
+#define YYNTOKENS  53
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  36
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  118
+#define YYNRULES  122
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  273
+#define YYNSTATES  278
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   306
+#define YYMAXUTOK   307
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -720,25 +724,26 @@ static const yytype_int8 yytranslate[] =
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
       25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
       35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
-      45,    46,    47,    48,    49,    50,    51
+      45,    46,    47,    48,    49,    50,    51,    52
 };
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   174,   174,   181,   182,   188,   194,   203,   204,   205,
-     206,   207,   208,   209,   210,   211,   212,   213,   214,   215,
-     219,   229,   240,   248,   255,   262,   269,   279,   285,   297,
-     303,   310,   317,   325,   333,   346,   355,   359,   368,   392,
-     416,   424,   432,   440,   449,   455,   463,   473,   474,   482,
-     492,   502,   510,   518,   527,   532,   537,   542,   547,   552,
-     557,   562,   567,   572,   580,   580,   580,   580,   580,   583,
-     584,   585,   586,   587,   588,   589,   595,   605,   609,   615,
-     621,   629,   633,   641,   649,   657,   661,   669,   682,   685,
-     689,   693,   699,   707,   718,   721,   725,   729,   733,   739,
-     745,   753,   759,   767,   768,   776,   784,   794,   804,   813,
-     814,   822,   823,   826,   833,   840,   849,   858,   869
+       0,   177,   177,   184,   185,   191,   197,   203,   207,   208,
+     209,   210,   211,   212,   213,   214,   215,   216,   217,   218,
+     219,   223,   230,   234,   245,   253,   260,   267,   274,   281,
+     285,   291,   303,   309,   316,   323,   331,   339,   347,   353,
+     362,   366,   375,   399,   423,   431,   439,   447,   456,   462,
+     470,   480,   481,   489,   499,   509,   517,   525,   534,   539,
+     544,   549,   554,   559,   564,   569,   574,   579,   587,   587,
+     587,   587,   587,   590,   591,   592,   593,   594,   595,   596,
+     602,   612,   616,   622,   628,   636,   640,   648,   656,   664,
+     668,   676,   689,   692,   696,   700,   706,   714,   725,   728,
+     732,   736,   740,   746,   752,   760,   766,   774,   775,   783,
+     791,   801,   811,   820,   821,   829,   830,   833,   840,   847,
+     856,   865,   876
 };
 #endif
 
@@ -757,20 +762,21 @@ static const char *const yytname[] =
   "\"end of file\"", "error", "\"invalid token\"", "PHP_START", "PHP_END",
   "SEMICOLON", "ASSIGN", "DEFINE", "LPAREN", "RPAREN", "LBRACE", "RBRACE",
   "COMMA", "ARRAY", "GT", "LT", "EQ", "COLON", "LE", "NE", "ARROW",
-  "LBRACKET", "RBRACKET", "IF", "ELSEIF", "ELSE", "ECHO_TOKEN", "IS_INT",
-  "IS_STRING", "IS_ARRAY", "IS_FLOAT", "IS_BOOL", "WHILE", "ENDWHILE",
-  "INCREMENT", "RETURN", "FUNCTION", "GLOBAL", "PLUS", "CLASS", "NEW",
-  "PUBLIC", "PROTECTED", "PRIVATE", "ARROW_OBJ", "VARIABLE", "INTEGER",
-  "FLOAT", "CHAR", "STRING", "BOOL", "IDENTIFIER", "$accept", "program",
-  "statements", "statement", "variable_declaration", "variable_assignment",
-  "expression", "echo_statement", "global_statement", "variable_list",
-  "constant_declaration", "if_statement", "elseif_clauses",
-  "elseif_clause", "else_clause", "while_statement", "condicion",
-  "type_check_func", "value", "array_value", "key_value_list",
-  "key_value_pair", "value_list", "function_declaration", "parameter_list",
-  "function_call", "argument_list", "array_declaration", "array_items",
-  "array_item", "class_declaration", "class_body", "class_member",
-  "class_property", "class_method", "object_creation", YY_NULLPTR
+  "LBRACKET", "RBRACKET", "DOLLAR", "IF", "ELSEIF", "ELSE", "ECHO_TOKEN",
+  "IS_INT", "IS_STRING", "IS_ARRAY", "IS_FLOAT", "IS_BOOL", "WHILE",
+  "ENDWHILE", "INCREMENT", "RETURN", "FUNCTION", "GLOBAL", "PLUS", "CLASS",
+  "NEW", "PUBLIC", "PROTECTED", "PRIVATE", "ARROW_OBJ", "VARIABLE",
+  "INTEGER", "FLOAT", "CHAR", "STRING", "BOOL", "IDENTIFIER", "$accept",
+  "program", "statements", "statement", "variable_declaration",
+  "variable_assignment", "expression", "echo_statement",
+  "global_statement", "variable_list", "constant_declaration",
+  "if_statement", "elseif_clauses", "elseif_clause", "else_clause",
+  "while_statement", "condicion", "type_check_func", "value",
+  "array_value", "key_value_list", "key_value_pair", "value_list",
+  "function_declaration", "parameter_list", "function_call",
+  "argument_list", "array_declaration", "array_items", "array_item",
+  "class_declaration", "class_body", "class_member", "class_property",
+  "class_method", "object_creation", YY_NULLPTR
 };
 
 static const char *
@@ -780,7 +786,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-39)
+#define YYPACT_NINF (-40)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -794,34 +800,34 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
-      24,   134,    28,    32,    53,    55,   414,    57,    18,     7,
-      45,    12,    67,     3,   -39,   -39,   -39,    96,   -39,   -39,
-     -39,   -39,   -39,   -39,   -39,   -39,   -39,   -39,   -39,    59,
-     422,    94,     0,   -39,   -39,   -39,   -39,   -39,   126,   -39,
-     442,   131,   -39,     4,   124,   -39,   170,   139,   103,    99,
-     383,   -39,   452,   -39,   -39,   140,   -39,   -39,   -39,   -39,
-     -39,   109,   147,   155,    14,   149,   -39,   460,   159,    78,
-     -39,   156,   -32,   -39,   127,    63,   -39,   161,   125,   130,
-      15,   171,   172,   173,   -39,   -39,   174,   163,   -39,   -39,
-      65,     1,   181,   471,   480,   490,   498,   509,   177,   145,
-     471,   471,   -39,   163,   182,   188,   -39,    73,   183,    98,
-     192,   199,   -39,   217,   218,   219,    -2,   -39,   -39,   106,
-     -39,   142,   -22,   184,   185,    30,   -39,   -39,   -39,   375,
-     206,    46,   -39,   223,   -39,   -39,   -39,   -39,   226,   222,
-     392,   -39,   -39,   235,   163,   -39,   163,   -39,   163,   -39,
-     163,   -39,   330,   236,   -39,   -39,   471,   471,   -39,    89,
-     -39,   -39,   471,   -39,   -39,   -39,   -39,   -39,   350,   134,
-     241,   -20,   224,   198,   248,   250,   252,   -39,   -39,   240,
-     120,    11,   125,   -39,   255,   -39,   -39,   163,   -39,   -39,
-     261,   244,    44,   263,   -39,   -39,   182,   -39,   -39,   -39,
-      77,   110,   134,   -39,   -39,   264,   253,   471,   471,   471,
-     433,   -39,   262,   -39,   -39,   -39,   -39,   275,   -39,   271,
-     -13,   279,   -39,   280,   202,   286,   277,   292,   298,   300,
-     -39,   -39,   125,   -39,   134,   290,   296,    62,   -39,   -39,
-     283,   -39,   -39,   134,   307,   -39,   -39,   -39,   239,   442,
-     367,   308,   -39,   -39,   273,   256,   134,   -39,   301,   -39,
-     276,   134,   318,   -39,   293,   316,   -39,   322,   -39,   134,
-     -39,   313,   -39
+      21,   386,    16,    24,    -4,    30,    13,    45,   -22,    20,
+      51,    12,    68,     4,   -40,   -40,   -40,   106,   -40,   -40,
+     -40,   -40,   -40,   -40,   -40,   -40,   -40,   -40,   -40,    66,
+     460,   -40,   105,     1,   -40,   -40,   -40,   -40,   -40,   115,
+     -40,   452,   116,   -40,    63,   124,   -40,   -40,   394,   133,
+      83,    97,   420,   147,   -40,   480,   -40,   -40,   151,   -40,
+     -40,   -40,   -40,   -40,   139,   159,   161,    62,   403,   -40,
+     491,   166,   144,   -40,   165,   -37,   -40,   129,   -10,   -40,
+     170,   132,   138,    34,   179,    85,   186,   -40,   -40,   184,
+     175,   -40,   -40,    95,   -40,     2,   192,   499,   505,   512,
+     519,   530,   189,   154,   499,   499,   -40,   175,   181,   182,
+     -40,   100,   194,   113,   183,   185,   -40,   208,   209,   211,
+      60,   -40,   -40,   119,   -40,   167,   -25,   172,   174,   104,
+     -40,   -40,   -40,   412,   202,    -2,   -40,   215,   -40,   -40,
+     -40,   -40,   -40,   216,   221,   433,   -40,   -40,   218,   175,
+     -40,   175,   -40,   175,   -40,   175,   -40,   323,   219,   -40,
+     -40,   499,   499,   -40,    39,   -40,   -40,   499,   -40,   -40,
+     -40,   -40,   -40,   344,   386,   222,   -27,   223,   177,   230,
+     233,   236,   -40,   -40,   224,   131,    22,   132,   -40,   242,
+     -40,   -40,   175,   -40,   -40,   240,   226,    47,   245,   -40,
+     -40,   181,   -40,   -40,   -40,    81,   143,   386,   -40,   -40,
+     246,   248,   499,   499,   499,   473,   -40,   250,   -40,   -40,
+     -40,   -40,   254,   -40,   252,   136,   255,   -40,   263,    99,
+     259,   261,   269,   273,   275,   -40,   -40,   132,   -40,   386,
+     278,   271,   140,   -40,   -40,   256,   -40,   -40,   386,   279,
+     -40,   -40,   -40,   197,   452,   365,   280,   -40,   -40,   244,
+     239,   386,   -40,   286,   -40,   260,   386,   294,   -40,   281,
+     291,   -40,   293,   -40,   386,   -40,   302,   -40
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -830,51 +836,51 @@ static const yytype_int16 yypact[] =
 static const yytype_int8 yydefact[] =
 {
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     3,     8,     7,     0,    12,    15,
-       9,    10,    11,    13,    14,    16,    17,     1,    19,     0,
-       0,     0,     0,    69,    70,    71,    72,    73,     0,    74,
-       0,     0,    36,     0,     0,    20,     0,     0,     0,     0,
-      94,     2,     0,     4,    18,     0,    64,    65,    66,    67,
-      68,     0,     0,     0,     0,     0,    30,     0,     0,     0,
-      29,     0,    88,    35,     0,     0,    23,     0,     0,     0,
-       0,     0,     0,     0,    24,    27,     0,    96,    97,    95,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,    77,     0,    72,     0,    85,     0,    81,     0,
-       0,     0,    31,     0,     0,     0,     0,    89,    90,     0,
-      37,     0,     0,     0,     0,     0,   109,   111,   112,     0,
-       0,     0,   103,     0,    22,    26,    21,    25,     0,     0,
-       0,     6,     5,     0,    54,    57,    55,    58,    56,    59,
-      60,    61,     0,     0,    62,    63,     0,     0,    79,     0,
-      80,    78,     0,    76,    75,    32,    33,    34,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,   108,   110,    72,
-       0,     0,     0,   102,     0,    28,    93,    99,   100,    98,
-       0,    44,     0,     0,    83,    84,     0,    82,    86,    53,
-       0,     0,     0,    91,    92,     0,     0,     0,     0,     0,
-       0,   101,     0,   107,   106,   105,   104,     0,    38,     0,
-      43,     0,    51,     0,     0,     0,     0,     0,     0,     0,
-      69,    72,     0,   118,     0,     0,     0,    41,    47,    42,
-       0,    52,    87,     0,     0,   113,   114,   115,     0,     0,
-       0,     0,    48,    40,     0,     0,     0,    46,     0,    45,
-       0,     0,     0,   117,     0,     0,    50,     0,   116,     0,
-      39,     0,    49
+       0,     0,     0,     0,     3,     9,     8,     0,    13,    16,
+      10,    11,    12,    14,    15,    17,    18,     1,     7,     0,
+       0,    38,     0,     0,    73,    74,    75,    76,    77,     0,
+      78,     0,     0,    40,     0,     0,    22,    21,     0,     0,
+       0,     0,    98,     0,     2,     0,     4,    19,     0,    68,
+      69,    70,    71,    72,     0,     0,     0,     0,     0,    33,
+       0,     0,     0,    32,     0,    92,    39,     0,     0,    25,
+       0,     0,     0,     0,     0,     0,     0,    26,    30,     0,
+     100,   101,    99,     0,    20,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,    81,     0,    76,     0,
+      89,     0,    85,     0,     0,     0,    34,     0,     0,     0,
+       0,    93,    94,     0,    41,     0,     0,     0,     0,     0,
+     113,   115,   116,     0,     0,     0,   107,     0,    24,    28,
+      29,    23,    27,     0,     0,     0,     6,     5,     0,    58,
+      61,    59,    62,    60,    63,    64,    65,     0,     0,    66,
+      67,     0,     0,    83,     0,    84,    82,     0,    80,    79,
+      35,    36,    37,     0,     0,     0,     0,     0,     0,     0,
+       0,     0,   112,   114,    76,     0,     0,     0,   106,     0,
+      31,    97,   103,   104,   102,     0,    48,     0,     0,    87,
+      88,     0,    86,    90,    57,     0,     0,     0,    95,    96,
+       0,     0,     0,     0,     0,     0,   105,     0,   111,   110,
+     109,   108,     0,    42,     0,    47,     0,    55,     0,     0,
+       0,     0,     0,     0,     0,    73,    76,     0,   122,     0,
+       0,     0,    45,    51,    46,     0,    56,    91,     0,     0,
+     117,   118,   119,     0,     0,     0,     0,    52,    44,     0,
+       0,     0,    50,     0,    49,     0,     0,     0,   121,     0,
+       0,    54,     0,   120,     0,    43,     0,    53
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int16 yypgoto[] =
 {
-     -39,   -39,    -1,   -12,   -39,   -39,   288,   -39,   -39,   -39,
-     -39,   -39,   -39,   105,   117,   -39,   -38,   -39,    -3,   -39,
-     -39,   176,   -39,   -39,   -39,   -39,   -39,   294,   265,   164,
-     -39,   -39,   230,   -39,   -39,   -39
+     -40,   -40,    -1,   -12,   -40,   -40,   262,   -40,   -40,   -40,
+     -40,   -40,   -40,    65,    69,   -40,   -39,   -40,    -3,   -40,
+     -40,   152,   -40,   -40,   -40,   -40,   -40,   267,   241,   141,
+     -40,   -40,   173,   -40,   -40,   -40
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int16 yydefgoto[] =
 {
-       0,     2,   260,    14,    15,    16,    17,    18,    19,    43,
-      20,    21,   237,   238,   239,    22,    62,    63,    64,    39,
-     107,   108,   109,    23,   119,    24,    90,   215,   180,   132,
-      25,   125,   126,   127,   128,    26
+       0,     2,   265,    14,    15,    16,    17,    18,    19,    44,
+      20,    21,   242,   243,   244,    22,    65,    66,    67,    40,
+     111,   112,   113,    23,   123,    24,    93,   220,   185,   136,
+      25,   129,   130,   131,   132,    26
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -882,190 +888,198 @@ static const yytype_int16 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int16 yytable[] =
 {
-      13,    53,    71,    38,     3,    66,   141,    51,   168,    73,
-       4,   235,   236,   117,   173,   169,    74,    45,    46,   118,
-     134,    67,    67,   174,   212,   203,     5,     1,    27,     6,
-     100,   204,    78,   101,    68,     7,    67,    28,    52,     8,
-       9,   177,    10,    82,    69,     3,    47,    89,    11,    92,
-      48,     4,    42,    48,    12,   220,    49,   213,   182,    49,
-     214,    29,   106,    30,   111,    40,   121,     5,   183,    41,
-       6,   122,   123,   124,   139,    50,     7,   140,     3,    52,
-       8,     9,   158,    10,     4,   159,   235,   251,   222,    11,
-     143,   145,   147,   149,   151,    12,    44,   154,   155,   121,
-       5,    54,    65,     6,   122,   123,   124,   161,    55,     7,
-     162,     3,    52,     8,     9,   170,    10,     4,   171,   113,
-     114,   115,    11,    94,    95,    96,   106,    97,    12,   211,
-      67,    70,   182,     5,    75,     3,     6,   189,   196,    72,
-     105,     4,     7,   223,    84,    52,     8,     9,    85,    10,
-      86,   192,    93,   194,   195,    11,    98,     5,   102,   198,
-       6,    12,    31,    99,   112,   116,     7,   200,   201,   129,
-       8,     9,   120,    10,   130,    76,   135,   136,   137,    11,
-      53,   133,   138,    77,    67,    12,   142,   152,    53,    53,
-     153,    78,   160,   172,   103,    33,    34,    35,   104,    37,
-     105,   224,   156,     3,   227,   228,   229,   194,   157,     4,
-      79,   258,    53,   242,   163,    80,    33,    34,    35,    36,
-      37,   164,   165,   166,   167,     5,   181,   186,     6,   175,
-     176,   184,   205,   248,     7,   185,    53,    52,     8,     9,
-       3,    10,   255,    53,   190,   193,     4,    11,    53,   206,
-     257,   202,    53,    12,   207,   264,   208,     3,   209,    53,
-     210,   226,     5,     4,   217,     6,   218,   263,   271,   219,
-     232,     7,   221,   225,    52,     8,     9,     3,    10,     5,
-     233,   234,     6,     4,    11,   241,   244,   266,     7,   240,
-      12,    52,     8,     9,     3,    10,   243,   245,   249,     5,
-       4,    11,     6,   246,   268,   247,   250,    12,     7,   254,
-     265,    52,     8,     9,     3,    10,     5,   256,   261,     6,
-       4,    11,   262,   267,   272,     7,   269,    12,    52,     8,
-       9,     3,    10,   270,    81,   197,     5,     4,    11,     6,
-      83,   191,   252,   131,    12,     7,   216,     0,    52,     8,
-       9,     3,    10,     5,   253,   178,     6,     4,    11,     0,
-       0,   199,     7,     0,    12,     0,     8,     9,     3,    10,
-       0,     0,     0,     5,     4,    11,     6,     0,   259,     0,
-       0,    12,     7,     0,   102,     0,     8,     9,    31,    10,
-       5,     0,     0,     6,     0,    11,    31,     0,     0,     7,
-       0,    12,     0,     8,     9,    31,    10,     0,     0,     0,
-       0,     0,    11,     0,     0,     0,     0,     0,    12,     0,
-     103,    33,    34,    35,   179,    37,   105,    31,    87,    33,
-      34,    35,    36,    37,    88,    31,     0,   187,    33,    34,
-      35,    36,    37,   188,     0,     0,    77,     0,     0,    56,
-      57,    58,    59,    60,    78,    31,     0,     0,     0,    32,
-      33,    34,    35,    36,    37,    31,     0,    61,    33,    34,
-      35,    36,    37,    31,     0,     0,     0,     0,   103,   230,
-      34,    35,   231,    37,    31,     0,     0,    61,    33,    34,
-      35,    36,    37,    31,     0,     0,     0,    91,    33,    34,
-      35,    36,    37,    31,     0,   103,    33,    34,    35,   110,
-      37,    31,     0,     0,     0,     0,   103,    33,    34,    35,
-      36,    37,    31,     0,     0,   144,    33,    34,    35,    36,
-      37,     0,     0,     0,     0,   146,    33,    34,    35,    36,
-      37,     0,     0,   148,    33,    34,    35,    36,    37,     0,
-       0,     0,     0,     0,   150,    33,    34,    35,    36,    37
+      13,    56,    74,    39,    29,    53,    69,   146,    54,   121,
+     187,     4,   178,    46,    31,   122,    27,    47,    48,   208,
+     188,   179,    70,    70,     1,   209,    32,   125,     5,    28,
+      42,     6,   126,   127,   128,   217,    71,     7,    30,   138,
+      55,     8,     9,    81,    10,    85,    72,    49,    53,    92,
+      11,    50,    96,    41,     4,    70,    12,    51,   225,    33,
+      34,    35,    36,    37,    38,   110,    43,   115,    76,   218,
+     173,     5,   219,    50,     6,    77,    52,   174,   104,    51,
+       7,   105,    53,    55,     8,     9,   140,    10,     4,   201,
+     141,   109,   227,    11,   148,   150,   152,   154,   156,    12,
+      53,   159,   160,    45,   144,     5,     4,   145,     6,   163,
+     247,    57,   164,    68,     7,   182,    58,    55,     8,     9,
+      73,    10,   166,     5,    75,   167,     6,    11,   175,    88,
+     110,   176,     7,    12,    78,    55,     8,     9,    87,    10,
+     216,   125,   194,   187,    53,    11,   126,   127,   128,    89,
+       4,    12,    94,    98,    99,   100,   197,   101,   199,   200,
+      70,   240,   241,    97,   203,   240,   256,     5,   102,   103,
+       6,   116,   205,   206,   120,   124,     7,   228,   133,    55,
+       8,     9,   134,    10,   139,    56,   117,   118,   119,    11,
+     137,   142,   143,    56,    56,    12,    70,   147,    53,   157,
+     158,   161,   162,   165,     4,   168,   229,   169,   262,   232,
+     233,   234,   199,   170,   171,   263,   172,    56,   180,   177,
+     181,     5,   186,   189,     6,   190,   191,   195,   198,   211,
+       7,   210,   207,    55,     8,     9,   212,    10,   253,   213,
+      53,    56,   214,    11,   215,   223,     4,   260,    56,    12,
+     268,   222,   224,    56,   226,   230,   231,    56,   237,   238,
+     269,    53,   239,     5,    56,   245,     6,     4,   246,   248,
+     249,   271,     7,   276,   250,    55,     8,     9,   251,    10,
+     252,   255,    53,   259,     5,    11,   254,     6,     4,   261,
+     266,    12,   273,     7,   267,   270,    55,     8,     9,   272,
+      10,   274,   183,    53,   275,     5,    11,   257,     6,     4,
+      84,   258,    12,   277,     7,    86,   202,    55,     8,     9,
+       0,    10,   135,     0,     3,     0,     5,    11,   221,     6,
+       4,     0,     0,    12,   196,     7,     0,     0,    55,     8,
+       9,     0,    10,     0,     0,     3,     0,     5,    11,     0,
+       6,     4,     0,     0,    12,   204,     7,     0,     0,     0,
+       8,     9,     0,    10,     0,     0,     3,     0,     5,    11,
+       0,     6,     4,     0,     0,    12,   264,     7,     0,     0,
+       0,     8,     9,     0,    10,     0,     0,     3,     0,     5,
+      11,     0,     6,     4,     0,     0,    12,     0,     7,    79,
+       0,     0,     8,     9,     0,    10,     0,    80,     0,     0,
+       5,    11,   106,     6,     0,    81,    32,    12,     0,     7,
+       0,   106,     0,     8,     9,    32,    10,     0,     0,     0,
+       0,     0,    11,    32,     0,    82,     0,     0,    12,     0,
+      83,    34,    35,    36,    37,    38,    32,     0,     0,   107,
+      34,    35,    36,   108,    38,   109,     0,     0,   107,    34,
+      35,    36,   184,    38,   109,    32,    90,    34,    35,    36,
+      37,    38,    91,    32,     0,     0,     0,     0,     0,   192,
+      34,    35,    36,    37,    38,   193,    80,     0,    59,    60,
+      61,    62,    63,    32,    81,     0,     0,     0,    64,    34,
+      35,    36,    37,    38,    32,     0,    64,    34,    35,    36,
+      37,    38,    32,     0,     0,     0,     0,     0,    32,   107,
+     235,    35,    36,   236,    38,    32,    95,    34,    35,    36,
+      37,    38,    32,     0,     0,     0,     0,   107,    34,    35,
+      36,   114,    38,    32,     0,   107,    34,    35,    36,    37,
+      38,   149,    34,    35,    36,    37,    38,     0,   151,    34,
+      35,    36,    37,    38,     0,   153,    34,    35,    36,    37,
+      38,     0,     0,     0,     0,     0,   155,    34,    35,    36,
+      37,    38
 };
 
 static const yytype_int16 yycheck[] =
 {
-       1,    13,    40,     6,     1,     5,     5,     4,    10,     5,
-       7,    24,    25,    45,    36,    17,    12,     5,     6,    51,
-       5,    21,    21,    45,    13,    45,    23,     3,     0,    26,
-      16,    51,    21,    19,    34,    32,    21,     5,    35,    36,
-      37,    11,    39,    46,    44,     1,    34,    50,    45,    52,
-      38,     7,    45,    38,    51,    11,    44,    46,    12,    44,
-      49,     8,    65,     8,    67,     8,    36,    23,    22,    51,
-      26,    41,    42,    43,     9,     8,    32,    12,     1,    35,
-      36,    37,     9,    39,     7,    12,    24,    25,    11,    45,
-      93,    94,    95,    96,    97,    51,    51,   100,   101,    36,
-      23,     5,     8,    26,    41,    42,    43,     9,    49,    32,
-      12,     1,    35,    36,    37,     9,    39,     7,    12,    41,
-      42,    43,    45,    14,    15,    16,   129,    18,    51,     9,
-      21,     5,    12,    23,    10,     1,    26,   140,    49,     8,
-      51,     7,    32,    33,     5,    35,    36,    37,    45,    39,
-      51,   152,    12,   156,   157,    45,     9,    23,     9,   162,
-      26,    51,    13,     8,     5,     9,    32,   168,   169,     8,
-      36,    37,    45,    39,    49,     5,     5,     5,     5,    45,
-     192,    51,     8,    13,    21,    51,     5,    10,   200,   201,
-      45,    21,     9,    51,    45,    46,    47,    48,    49,    50,
-      51,   202,    20,     1,   207,   208,   209,   210,    20,     7,
-      40,   249,   224,    11,    22,    45,    46,    47,    48,    49,
-      50,    22,     5,     5,     5,    23,    20,     5,    26,    45,
-      45,     8,     8,   234,    32,     9,   248,    35,    36,    37,
-       1,    39,   243,   255,     9,     9,     7,    45,   260,    51,
-      11,    10,   264,    51,     6,   256,     6,     1,     6,   271,
-      20,     8,    23,     7,     9,    26,     5,    11,   269,    25,
-       8,    32,     9,     9,    35,    36,    37,     1,    39,    23,
-       5,    10,    26,     7,    45,     5,     9,    11,    32,    10,
-      51,    35,    36,    37,     1,    39,    10,     5,     8,    23,
-       7,    45,    26,     5,    11,     5,    10,    51,    32,    26,
-       9,    35,    36,    37,     1,    39,    23,    10,    10,    26,
-       7,    45,    49,     5,    11,    32,    10,    51,    35,    36,
-      37,     1,    39,    11,    46,   159,    23,     7,    45,    26,
-      46,    11,   237,    78,    51,    32,   182,    -1,    35,    36,
-      37,     1,    39,    23,   237,   125,    26,     7,    45,    -1,
-      -1,    11,    32,    -1,    51,    -1,    36,    37,     1,    39,
-      -1,    -1,    -1,    23,     7,    45,    26,    -1,    11,    -1,
-      -1,    51,    32,    -1,     9,    -1,    36,    37,    13,    39,
-      23,    -1,    -1,    26,    -1,    45,    13,    -1,    -1,    32,
-      -1,    51,    -1,    36,    37,    13,    39,    -1,    -1,    -1,
-      -1,    -1,    45,    -1,    -1,    -1,    -1,    -1,    51,    -1,
-      45,    46,    47,    48,    49,    50,    51,    13,    45,    46,
-      47,    48,    49,    50,    51,    13,    -1,    45,    46,    47,
-      48,    49,    50,    51,    -1,    -1,    13,    -1,    -1,    27,
-      28,    29,    30,    31,    21,    13,    -1,    -1,    -1,    45,
-      46,    47,    48,    49,    50,    13,    -1,    45,    46,    47,
-      48,    49,    50,    13,    -1,    -1,    -1,    -1,    45,    46,
-      47,    48,    49,    50,    13,    -1,    -1,    45,    46,    47,
-      48,    49,    50,    13,    -1,    -1,    -1,    45,    46,    47,
-      48,    49,    50,    13,    -1,    45,    46,    47,    48,    49,
-      50,    13,    -1,    -1,    -1,    -1,    45,    46,    47,    48,
-      49,    50,    13,    -1,    -1,    45,    46,    47,    48,    49,
-      50,    -1,    -1,    -1,    -1,    45,    46,    47,    48,    49,
-      50,    -1,    -1,    45,    46,    47,    48,    49,    50,    -1,
-      -1,    -1,    -1,    -1,    45,    46,    47,    48,    49,    50
+       1,    13,    41,     6,     8,     1,     5,     5,     4,    46,
+      12,     7,    37,     1,     1,    52,     0,     5,     6,    46,
+      22,    46,    21,    21,     3,    52,    13,    37,    24,     5,
+      52,    27,    42,    43,    44,    13,    35,    33,     8,     5,
+      36,    37,    38,    21,    40,    48,    45,    35,     1,    52,
+      46,    39,    55,     8,     7,    21,    52,    45,    11,    46,
+      47,    48,    49,    50,    51,    68,    46,    70,     5,    47,
+      10,    24,    50,    39,    27,    12,     8,    17,    16,    45,
+      33,    19,     1,    36,    37,    38,     1,    40,     7,    50,
+       5,    52,    11,    46,    97,    98,    99,   100,   101,    52,
+       1,   104,   105,    52,     9,    24,     7,    12,    27,     9,
+      11,     5,    12,     8,    33,    11,    50,    36,    37,    38,
+       5,    40,     9,    24,     8,    12,    27,    46,     9,    46,
+     133,    12,    33,    52,    10,    36,    37,    38,     5,    40,
+       9,    37,   145,    12,     1,    46,    42,    43,    44,    52,
+       7,    52,     5,    14,    15,    16,   157,    18,   161,   162,
+      21,    25,    26,    12,   167,    25,    26,    24,     9,     8,
+      27,     5,   173,   174,     9,    46,    33,    34,     8,    36,
+      37,    38,    50,    40,     5,   197,    42,    43,    44,    46,
+      52,     5,     8,   205,   206,    52,    21,     5,     1,    10,
+      46,    20,    20,     9,     7,    22,   207,    22,    11,   212,
+     213,   214,   215,     5,     5,   254,     5,   229,    46,    52,
+      46,    24,    20,     8,    27,     9,     5,     9,     9,    52,
+      33,     8,    10,    36,    37,    38,     6,    40,   239,     6,
+       1,   253,     6,    46,    20,     5,     7,   248,   260,    52,
+      11,     9,    26,   265,     9,     9,     8,   269,     8,     5,
+     261,     1,    10,    24,   276,    10,    27,     7,     5,    10,
+       9,    11,    33,   274,     5,    36,    37,    38,     5,    40,
+       5,    10,     1,    27,    24,    46,     8,    27,     7,    10,
+      10,    52,    11,    33,    50,     9,    36,    37,    38,     5,
+      40,    10,   129,     1,    11,    24,    46,   242,    27,     7,
+      48,   242,    52,    11,    33,    48,   164,    36,    37,    38,
+      -1,    40,    81,    -1,     1,    -1,    24,    46,   187,    27,
+       7,    -1,    -1,    52,    11,    33,    -1,    -1,    36,    37,
+      38,    -1,    40,    -1,    -1,     1,    -1,    24,    46,    -1,
+      27,     7,    -1,    -1,    52,    11,    33,    -1,    -1,    -1,
+      37,    38,    -1,    40,    -1,    -1,     1,    -1,    24,    46,
+      -1,    27,     7,    -1,    -1,    52,    11,    33,    -1,    -1,
+      -1,    37,    38,    -1,    40,    -1,    -1,     1,    -1,    24,
+      46,    -1,    27,     7,    -1,    -1,    52,    -1,    33,     5,
+      -1,    -1,    37,    38,    -1,    40,    -1,    13,    -1,    -1,
+      24,    46,     9,    27,    -1,    21,    13,    52,    -1,    33,
+      -1,     9,    -1,    37,    38,    13,    40,    -1,    -1,    -1,
+      -1,    -1,    46,    13,    -1,    41,    -1,    -1,    52,    -1,
+      46,    47,    48,    49,    50,    51,    13,    -1,    -1,    46,
+      47,    48,    49,    50,    51,    52,    -1,    -1,    46,    47,
+      48,    49,    50,    51,    52,    13,    46,    47,    48,    49,
+      50,    51,    52,    13,    -1,    -1,    -1,    -1,    -1,    46,
+      47,    48,    49,    50,    51,    52,    13,    -1,    28,    29,
+      30,    31,    32,    13,    21,    -1,    -1,    -1,    46,    47,
+      48,    49,    50,    51,    13,    -1,    46,    47,    48,    49,
+      50,    51,    13,    -1,    -1,    -1,    -1,    -1,    13,    46,
+      47,    48,    49,    50,    51,    13,    46,    47,    48,    49,
+      50,    51,    13,    -1,    -1,    -1,    -1,    46,    47,    48,
+      49,    50,    51,    13,    -1,    46,    47,    48,    49,    50,
+      51,    46,    47,    48,    49,    50,    51,    -1,    46,    47,
+      48,    49,    50,    51,    -1,    46,    47,    48,    49,    50,
+      51,    -1,    -1,    -1,    -1,    -1,    46,    47,    48,    49,
+      50,    51
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     3,    53,     1,     7,    23,    26,    32,    36,    37,
-      39,    45,    51,    54,    55,    56,    57,    58,    59,    60,
-      62,    63,    67,    75,    77,    82,    87,     0,     5,     8,
-       8,    13,    45,    46,    47,    48,    49,    50,    70,    71,
-       8,    51,    45,    61,    51,     5,     6,    34,    38,    44,
-       8,     4,    35,    55,     5,    49,    27,    28,    29,    30,
-      31,    45,    68,    69,    70,     8,     5,    21,    34,    44,
-       5,    68,     8,     5,    12,    10,     5,    13,    21,    40,
-      45,    58,    70,    79,     5,    45,    51,    45,    51,    70,
-      78,    45,    70,    12,    14,    15,    16,    18,     9,     8,
-      16,    19,     9,    45,    49,    51,    70,    72,    73,    74,
-      49,    70,     5,    41,    42,    43,     9,    45,    51,    76,
-      45,    36,    41,    42,    43,    83,    84,    85,    86,     8,
-      49,    80,    81,    51,     5,     5,     5,     5,     8,     9,
-      12,     5,     5,    70,    45,    70,    45,    70,    45,    70,
-      45,    70,    10,    45,    70,    70,    20,    20,     9,    12,
-       9,     9,    12,    22,    22,     5,     5,     5,    10,    17,
-       9,    12,    51,    36,    45,    45,    45,    11,    84,    49,
-      80,    20,    12,    22,     8,     9,     5,    45,    51,    70,
-       9,    11,    54,     9,    70,    70,    49,    73,    70,    11,
-      54,    54,    10,    45,    51,     8,    51,     6,     6,     6,
-      20,     9,    13,    46,    49,    79,    81,     9,     5,    25,
-      11,     9,    11,    33,    54,     9,     8,    70,    70,    70,
-      46,    49,     8,     5,    10,    24,    25,    64,    65,    66,
-      10,     5,    11,    10,     9,     5,     5,     5,    54,     8,
-      10,    25,    65,    66,    26,    54,    10,    11,    68,    11,
-      54,    10,    49,    11,    54,     9,    11,     5,    11,    10,
-      11,    54,    11
+       0,     3,    54,     1,     7,    24,    27,    33,    37,    38,
+      40,    46,    52,    55,    56,    57,    58,    59,    60,    61,
+      63,    64,    68,    76,    78,    83,    88,     0,     5,     8,
+       8,     1,    13,    46,    47,    48,    49,    50,    51,    71,
+      72,     8,    52,    46,    62,    52,     1,     5,     6,    35,
+      39,    45,     8,     1,     4,    36,    56,     5,    50,    28,
+      29,    30,    31,    32,    46,    69,    70,    71,     8,     5,
+      21,    35,    45,     5,    69,     8,     5,    12,    10,     5,
+      13,    21,    41,    46,    59,    71,    80,     5,    46,    52,
+      46,    52,    71,    79,     5,    46,    71,    12,    14,    15,
+      16,    18,     9,     8,    16,    19,     9,    46,    50,    52,
+      71,    73,    74,    75,    50,    71,     5,    42,    43,    44,
+       9,    46,    52,    77,    46,    37,    42,    43,    44,    84,
+      85,    86,    87,     8,    50,    81,    82,    52,     5,     5,
+       1,     5,     5,     8,     9,    12,     5,     5,    71,    46,
+      71,    46,    71,    46,    71,    46,    71,    10,    46,    71,
+      71,    20,    20,     9,    12,     9,     9,    12,    22,    22,
+       5,     5,     5,    10,    17,     9,    12,    52,    37,    46,
+      46,    46,    11,    85,    50,    81,    20,    12,    22,     8,
+       9,     5,    46,    52,    71,     9,    11,    55,     9,    71,
+      71,    50,    74,    71,    11,    55,    55,    10,    46,    52,
+       8,    52,     6,     6,     6,    20,     9,    13,    47,    50,
+      80,    82,     9,     5,    26,    11,     9,    11,    34,    55,
+       9,     8,    71,    71,    71,    47,    50,     8,     5,    10,
+      25,    26,    65,    66,    67,    10,     5,    11,    10,     9,
+       5,     5,     5,    55,     8,    10,    26,    66,    67,    27,
+      55,    10,    11,    69,    11,    55,    10,    50,    11,    55,
+       9,    11,     5,    11,    10,    11,    55,    11
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    52,    53,    54,    54,    54,    54,    55,    55,    55,
-      55,    55,    55,    55,    55,    55,    55,    55,    55,    55,
-      56,    57,    57,    57,    57,    57,    57,    58,    58,    59,
-      59,    59,    59,    59,    59,    60,    61,    61,    62,    63,
-      63,    63,    63,    63,    63,    63,    63,    64,    64,    65,
-      66,    67,    67,    67,    68,    68,    68,    68,    68,    68,
-      68,    68,    68,    68,    69,    69,    69,    69,    69,    70,
-      70,    70,    70,    70,    70,    70,    70,    71,    71,    71,
-      71,    72,    72,    73,    73,    74,    74,    75,    76,    76,
-      76,    76,    76,    77,    78,    78,    78,    78,    78,    78,
-      78,    79,    79,    80,    80,    81,    81,    81,    82,    83,
-      83,    84,    84,    85,    85,    85,    86,    86,    87
+       0,    53,    54,    55,    55,    55,    55,    55,    56,    56,
+      56,    56,    56,    56,    56,    56,    56,    56,    56,    56,
+      56,    57,    57,    58,    58,    58,    58,    58,    58,    58,
+      59,    59,    60,    60,    60,    60,    60,    60,    60,    61,
+      62,    62,    63,    64,    64,    64,    64,    64,    64,    64,
+      64,    65,    65,    66,    67,    68,    68,    68,    69,    69,
+      69,    69,    69,    69,    69,    69,    69,    69,    70,    70,
+      70,    70,    70,    71,    71,    71,    71,    71,    71,    71,
+      71,    72,    72,    72,    72,    73,    73,    74,    74,    75,
+      75,    76,    77,    77,    77,    77,    77,    78,    79,    79,
+      79,    79,    79,    79,    79,    80,    80,    81,    81,    82,
+      82,    82,    83,    84,    84,    85,    85,    86,    86,    86,
+      87,    87,    88
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     3,     1,     2,     4,     4,     1,     1,     1,
-       1,     1,     1,     1,     1,     1,     1,     1,     2,     2,
-       2,     4,     4,     3,     3,     4,     4,     3,     5,     3,
-       3,     4,     5,     5,     5,     3,     1,     3,     7,    12,
-       9,     8,     8,     7,     6,    10,    10,     1,     2,     7,
-       4,     7,     8,     6,     3,     3,     3,     3,     3,     3,
-       3,     3,     3,     3,     1,     1,     1,     1,     1,     1,
-       1,     1,     1,     1,     1,     4,     4,     3,     4,     4,
-       4,     1,     3,     3,     3,     1,     3,     8,     0,     1,
-       1,     3,     3,     5,     0,     1,     1,     1,     3,     3,
-       3,     4,     3,     1,     3,     3,     3,     3,     5,     1,
-       2,     1,     1,     5,     5,     5,     8,     7,     7
+       0,     2,     3,     1,     2,     4,     4,     2,     1,     1,
+       1,     1,     1,     1,     1,     1,     1,     1,     1,     2,
+       2,     2,     2,     4,     4,     3,     3,     4,     4,     4,
+       3,     5,     3,     3,     4,     5,     5,     5,     2,     3,
+       1,     3,     7,    12,     9,     8,     8,     7,     6,    10,
+      10,     1,     2,     7,     4,     7,     8,     6,     3,     3,
+       3,     3,     3,     3,     3,     3,     3,     3,     1,     1,
+       1,     1,     1,     1,     1,     1,     1,     1,     1,     4,
+       4,     3,     4,     4,     4,     1,     3,     3,     3,     1,
+       3,     8,     0,     1,     1,     3,     3,     5,     0,     1,
+       1,     1,     3,     3,     3,     4,     3,     1,     3,     3,
+       3,     3,     5,     1,     2,     1,     1,     5,     5,     5,
+       8,     7,     7
 };
 
 
@@ -1529,62 +1543,74 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* program: PHP_START statements PHP_END  */
-#line 175 "phppy.y"
+#line 178 "phppy.y"
 {
     output = (yyvsp[-1].strval);  // Asigna las sentencias generadas a la variable global 'output'
 }
-#line 1537 "phppy.tab.c"
+#line 1551 "phppy.tab.c"
     break;
 
   case 4: /* statements: statements statement  */
-#line 183 "phppy.y"
+#line 186 "phppy.y"
     {
         char *result = malloc(strlen((yyvsp[-1].strval)) + strlen((yyvsp[0].strval)) + 1);  // Reserva memoria para el resultado concatenado
         sprintf(result, "%s%s", (yyvsp[-1].strval), (yyvsp[0].strval));  // Concatenar las dos sentencias
         (yyval.strval) = result;  // Almacena el resultado concatenado
     }
-#line 1547 "phppy.tab.c"
+#line 1561 "phppy.tab.c"
     break;
 
   case 5: /* statements: statements RETURN value SEMICOLON  */
-#line 189 "phppy.y"
+#line 192 "phppy.y"
     {
         char *result = malloc(strlen((yyvsp[-3].strval)) + strlen((yyvsp[-1].strval)) + 10);  // Reserva memoria para la sentencia de retorno
         sprintf(result, "%sreturn %s\n", (yyvsp[-3].strval), (yyvsp[-1].strval));  // Formatea la sentencia de retorno
         (yyval.strval) = result;  // Almacena la sentencia de retorno
     }
-#line 1557 "phppy.tab.c"
+#line 1571 "phppy.tab.c"
     break;
 
   case 6: /* statements: statements RETURN VARIABLE SEMICOLON  */
-#line 195 "phppy.y"
+#line 198 "phppy.y"
     {
         char *result = malloc(strlen((yyvsp[-3].strval)) + strlen((yyvsp[-1].strval)) + 10);  // Reserva memoria para la sentencia de retorno
         sprintf(result, "%sreturn %s\n", (yyvsp[-3].strval), (yyvsp[-1].strval) + 1);  // Omite el carácter '$' de la variable y formatea la sentencia de retorno
         (yyval.strval) = result;  // Almacena la sentencia de retorno
     }
-#line 1567 "phppy.tab.c"
+#line 1581 "phppy.tab.c"
     break;
 
-  case 19: /* statement: error SEMICOLON  */
-#line 215 "phppy.y"
+  case 7: /* statements: error SEMICOLON  */
+#line 203 "phppy.y"
+                      { printf("Error in statements, skipping to next statement.\n"); yyerrok; }
+#line 1587 "phppy.tab.c"
+    break;
+
+  case 20: /* statement: error SEMICOLON  */
+#line 219 "phppy.y"
                       { yyerrok; }
-#line 1573 "phppy.tab.c"
+#line 1593 "phppy.tab.c"
     break;
 
-  case 20: /* variable_declaration: VARIABLE SEMICOLON  */
-#line 220 "phppy.y"
+  case 21: /* variable_declaration: VARIABLE SEMICOLON  */
+#line 224 "phppy.y"
 {
     char *var_name = (yyvsp[-1].strval) + 1;  // Omite el carácter '$' de la variable
     char *result = malloc(strlen(var_name) + 10);  // Reserva memoria para la declaración de la variable
     sprintf(result, "%s = None\n", var_name);  // Asigna 'None' a la variable en Python
     (yyval.strval) = result;  // Almacena la declaración de la variable
 }
-#line 1584 "phppy.tab.c"
+#line 1604 "phppy.tab.c"
     break;
 
-  case 21: /* variable_assignment: VARIABLE ASSIGN value SEMICOLON  */
+  case 22: /* variable_declaration: VARIABLE error  */
 #line 230 "phppy.y"
+                 { printf("Missing ';' in variable declaration.\n"); yyerrok; }
+#line 1610 "phppy.tab.c"
+    break;
+
+  case 23: /* variable_assignment: VARIABLE ASSIGN value SEMICOLON  */
+#line 235 "phppy.y"
 {
     char *var_name = (yyvsp[-3].strval) + 1;  // Omite el carácter '$' de la variable
     char *result = malloc(strlen(var_name) + strlen((yyvsp[-1].strval)) + 5);  // Reserva memoria para la asignación
@@ -1595,11 +1621,11 @@ yyreduce:
     }
     (yyval.strval) = result;  // Almacena la asignación
 }
-#line 1599 "phppy.tab.c"
+#line 1625 "phppy.tab.c"
     break;
 
-  case 22: /* variable_assignment: VARIABLE ASSIGN VARIABLE SEMICOLON  */
-#line 241 "phppy.y"
+  case 24: /* variable_assignment: VARIABLE ASSIGN VARIABLE SEMICOLON  */
+#line 246 "phppy.y"
 {
     char *var_name = (yyvsp[-3].strval) + 1;  // Omite el carácter '$' de la variable
     char *value_name = (yyvsp[-1].strval) + 1;  // Omite el carácter '$' del valor
@@ -1607,65 +1633,71 @@ yyreduce:
     sprintf(result, "%s = %s\n", var_name, value_name);  // Asigna la variable a otra variable
     (yyval.strval) = result;  // Almacena la asignación
 }
-#line 1611 "phppy.tab.c"
+#line 1637 "phppy.tab.c"
     break;
 
-  case 23: /* variable_assignment: VARIABLE ASSIGN SEMICOLON  */
-#line 249 "phppy.y"
+  case 25: /* variable_assignment: VARIABLE ASSIGN SEMICOLON  */
+#line 254 "phppy.y"
 {
     char *var_name = (yyvsp[-2].strval) + 1;  // Omite el carácter '$' de la variable
     char *result = malloc(strlen(var_name) + 10);  // Reserva memoria para la asignación
     sprintf(result, "%s = None\n", var_name);  // Asigna 'None' a la variable
     (yyval.strval) = result;  // Almacena la asignación
 }
-#line 1622 "phppy.tab.c"
+#line 1648 "phppy.tab.c"
     break;
 
-  case 24: /* variable_assignment: VARIABLE INCREMENT SEMICOLON  */
-#line 256 "phppy.y"
+  case 26: /* variable_assignment: VARIABLE INCREMENT SEMICOLON  */
+#line 261 "phppy.y"
 {
     char *var_name = (yyvsp[-2].strval) + 1;  // Omite el carácter '$' de la variable
     char *result = malloc(strlen(var_name) + 7);  // Reserva memoria para el incremento
     sprintf(result, "%s += 1\n", var_name);  // Incrementa la variable
     (yyval.strval) = result;  // Almacena el incremento
 }
-#line 1633 "phppy.tab.c"
+#line 1659 "phppy.tab.c"
     break;
 
-  case 25: /* variable_assignment: VARIABLE ASSIGN array_declaration SEMICOLON  */
-#line 263 "phppy.y"
+  case 27: /* variable_assignment: VARIABLE ASSIGN array_declaration SEMICOLON  */
+#line 268 "phppy.y"
 {
     char *var_name = (yyvsp[-3].strval) + 1;  // Omite el carácter '$' de la variable
     char *result = malloc(strlen(var_name) + strlen((yyvsp[-1].strval)) + 5);  // Reserva memoria para la asignación
     sprintf(result, "%s = %s\n", var_name, (yyvsp[-1].strval));  // Asigna la declaración de array a la variable
     (yyval.strval) = result;  // Almacena la asignación
 }
-#line 1644 "phppy.tab.c"
+#line 1670 "phppy.tab.c"
     break;
 
-  case 26: /* variable_assignment: VARIABLE ASSIGN expression SEMICOLON  */
-#line 270 "phppy.y"
+  case 28: /* variable_assignment: VARIABLE ASSIGN expression SEMICOLON  */
+#line 275 "phppy.y"
 {
     char *var_name = (yyvsp[-3].strval) + 1;  // Omite el carácter '$' de la variable
     char *result = malloc(strlen(var_name) + strlen((yyvsp[-1].strval)) + 5);  // Reserva memoria para la asignación
     sprintf(result, "%s = %s\n", var_name, (yyvsp[-1].strval));  // Asigna la expresión a la variable
     (yyval.strval) = result;  // Almacena la asignación
 }
-#line 1655 "phppy.tab.c"
+#line 1681 "phppy.tab.c"
     break;
 
-  case 27: /* expression: VARIABLE PLUS VARIABLE  */
-#line 280 "phppy.y"
+  case 29: /* variable_assignment: VARIABLE ASSIGN value error  */
+#line 281 "phppy.y"
+                              { printf("Missing ';' in variable assignment.\n"); yyerrok; }
+#line 1687 "phppy.tab.c"
+    break;
+
+  case 30: /* expression: VARIABLE PLUS VARIABLE  */
+#line 286 "phppy.y"
 {
     char *result = malloc(strlen((yyvsp[-2].strval)) + strlen((yyvsp[0].strval)) + 4);  // Reserva memoria para la suma
     sprintf(result, "%s + %s", (yyvsp[-2].strval) + 1, (yyvsp[0].strval) + 1);  // Omite el carácter '$' y suma las variables
     (yyval.strval) = result;  // Almacena la expresión
 }
-#line 1665 "phppy.tab.c"
+#line 1697 "phppy.tab.c"
     break;
 
-  case 28: /* expression: VARIABLE ARROW_OBJ IDENTIFIER LPAREN RPAREN  */
-#line 286 "phppy.y"
+  case 31: /* expression: VARIABLE ARROW_OBJ IDENTIFIER LPAREN RPAREN  */
+#line 292 "phppy.y"
 {
     char *var_name = (yyvsp[-4].strval) + 1;  // Omite el carácter '$'
     char *method_name = (yyvsp[-2].strval);
@@ -1673,43 +1705,43 @@ yyreduce:
     sprintf(result, "%s.%s()\n", var_name, method_name);
     (yyval.strval) = result;
 }
-#line 1677 "phppy.tab.c"
+#line 1709 "phppy.tab.c"
     break;
 
-  case 29: /* echo_statement: ECHO_TOKEN value SEMICOLON  */
-#line 298 "phppy.y"
+  case 32: /* echo_statement: ECHO_TOKEN value SEMICOLON  */
+#line 304 "phppy.y"
 {
     char *result = malloc(strlen((yyvsp[-1].strval)) + 8);  // Reserva memoria para la sentencia 'echo'
     sprintf(result, "print(%s)\n", (yyvsp[-1].strval));  // Imprime el valor
     (yyval.strval) = result;  // Almacena la sentencia 'echo'
 }
-#line 1687 "phppy.tab.c"
+#line 1719 "phppy.tab.c"
     break;
 
-  case 30: /* echo_statement: ECHO_TOKEN VARIABLE SEMICOLON  */
-#line 304 "phppy.y"
+  case 33: /* echo_statement: ECHO_TOKEN VARIABLE SEMICOLON  */
+#line 310 "phppy.y"
 {
     char *var_name = (yyvsp[-1].strval) + 1;  // Omite el carácter '$' de la variable
     char *result = malloc(strlen(var_name) + 10);  // Reserva memoria para la sentencia 'echo'
     sprintf(result, "print(%s)\n", var_name);  // Imprime la variable
     (yyval.strval) = result;  // Almacena la sentencia 'echo'
 }
-#line 1698 "phppy.tab.c"
+#line 1730 "phppy.tab.c"
     break;
 
-  case 31: /* echo_statement: ECHO_TOKEN VARIABLE INCREMENT SEMICOLON  */
-#line 311 "phppy.y"
+  case 34: /* echo_statement: ECHO_TOKEN VARIABLE INCREMENT SEMICOLON  */
+#line 317 "phppy.y"
 {
     char *var_name = (yyvsp[-2].strval) + 1;  // Omite el carácter '$' de la variable
     char *result = malloc(strlen(var_name) + 10);  // Reserva memoria para la sentencia 'echo'
     sprintf(result, "print(%s)\n%s += 1\n", var_name, var_name);  // Imprime e incrementa la variable
     (yyval.strval) = result;  // Almacena la sentencia 'echo'
 }
-#line 1709 "phppy.tab.c"
+#line 1741 "phppy.tab.c"
     break;
 
-  case 32: /* echo_statement: ECHO_TOKEN VARIABLE ARROW_OBJ PUBLIC SEMICOLON  */
-#line 318 "phppy.y"
+  case 35: /* echo_statement: ECHO_TOKEN VARIABLE ARROW_OBJ PUBLIC SEMICOLON  */
+#line 324 "phppy.y"
 {
     char *var_name = (yyvsp[-3].strval) + 1;  // Omite el carácter '$'
     char *property_name = "public";
@@ -1717,11 +1749,11 @@ yyreduce:
     sprintf(result, "print(self.%s)\n", property_name);
     (yyval.strval) = result;
 }
-#line 1721 "phppy.tab.c"
+#line 1753 "phppy.tab.c"
     break;
 
-  case 33: /* echo_statement: ECHO_TOKEN VARIABLE ARROW_OBJ PROTECTED SEMICOLON  */
-#line 326 "phppy.y"
+  case 36: /* echo_statement: ECHO_TOKEN VARIABLE ARROW_OBJ PROTECTED SEMICOLON  */
+#line 332 "phppy.y"
 {
     char *var_name = (yyvsp[-3].strval) + 1;  // Omite el carácter '$'
     char *property_name = "_protected";
@@ -1729,11 +1761,11 @@ yyreduce:
     sprintf(result, "print(self.%s)\n", property_name);
     (yyval.strval) = result;
 }
-#line 1733 "phppy.tab.c"
+#line 1765 "phppy.tab.c"
     break;
 
-  case 34: /* echo_statement: ECHO_TOKEN VARIABLE ARROW_OBJ PRIVATE SEMICOLON  */
-#line 334 "phppy.y"
+  case 37: /* echo_statement: ECHO_TOKEN VARIABLE ARROW_OBJ PRIVATE SEMICOLON  */
+#line 340 "phppy.y"
 {
     char *var_name = (yyvsp[-3].strval) + 1;  // Omite el carácter '$'
     char *property_name = "__private";
@@ -1741,39 +1773,45 @@ yyreduce:
     sprintf(result, "print(self.%s)\n", property_name);
     (yyval.strval) = result;
 }
-#line 1745 "phppy.tab.c"
+#line 1777 "phppy.tab.c"
     break;
 
-  case 35: /* global_statement: GLOBAL variable_list SEMICOLON  */
+  case 38: /* echo_statement: ECHO_TOKEN error  */
 #line 347 "phppy.y"
+                   { printf("Missing ';' in echo statement.\n"); yyerrok; }
+#line 1783 "phppy.tab.c"
+    break;
+
+  case 39: /* global_statement: GLOBAL variable_list SEMICOLON  */
+#line 354 "phppy.y"
 {
     char *result = malloc(strlen((yyvsp[-1].strval)) + 8);  // Reserva memoria para la sentencia 'global'
     sprintf(result, "global %s\n", (yyvsp[-1].strval));  // Marca las variables como globales
     (yyval.strval) = result;  // Almacena la sentencia 'global'
 }
-#line 1755 "phppy.tab.c"
+#line 1793 "phppy.tab.c"
     break;
 
-  case 36: /* variable_list: VARIABLE  */
-#line 356 "phppy.y"
+  case 40: /* variable_list: VARIABLE  */
+#line 363 "phppy.y"
 {
     (yyval.strval) = (yyvsp[0].strval) + 1;  // Omite el carácter '$'
 }
-#line 1763 "phppy.tab.c"
+#line 1801 "phppy.tab.c"
     break;
 
-  case 37: /* variable_list: variable_list COMMA VARIABLE  */
-#line 360 "phppy.y"
+  case 41: /* variable_list: variable_list COMMA VARIABLE  */
+#line 367 "phppy.y"
 {
     char *result = malloc(strlen((yyvsp[-2].strval)) + strlen((yyvsp[0].strval) + 1) + 3);  // Reserva memoria para la lista
     sprintf(result, "%s, %s", (yyvsp[-2].strval), (yyvsp[0].strval) + 1);  // Omite el carácter '$' y agrega la variable a la lista
     (yyval.strval) = result;  // Almacena la lista de variables
 }
-#line 1773 "phppy.tab.c"
+#line 1811 "phppy.tab.c"
     break;
 
-  case 38: /* constant_declaration: DEFINE LPAREN STRING COMMA value RPAREN SEMICOLON  */
-#line 369 "phppy.y"
+  case 42: /* constant_declaration: DEFINE LPAREN STRING COMMA value RPAREN SEMICOLON  */
+#line 376 "phppy.y"
 {
     char* constant_name = strip_quotes((yyvsp[-4].strval));  // Elimina las comillas del nombre de la constante
     char *type;  // Tipo de la constante
@@ -1795,11 +1833,11 @@ yyreduce:
     free(constant_name);  // Libera la memoria del nombre de la constante
     (yyval.strval) = result;  // Almacena la declaración de la constante
 }
-#line 1799 "phppy.tab.c"
+#line 1837 "phppy.tab.c"
     break;
 
-  case 39: /* if_statement: IF LPAREN type_check_func LPAREN VARIABLE RPAREN RPAREN LBRACE ECHO_TOKEN STRING SEMICOLON RBRACE  */
-#line 393 "phppy.y"
+  case 43: /* if_statement: IF LPAREN type_check_func LPAREN VARIABLE RPAREN RPAREN LBRACE ECHO_TOKEN STRING SEMICOLON RBRACE  */
+#line 400 "phppy.y"
 {
     char *type = get_symbol_type((yyvsp[-7].strval) + 1);  // Obtiene el tipo de la variable, omitiendo el carácter '$'
     char *py_type;  // Declara un puntero para el tipo en Python
@@ -1823,11 +1861,11 @@ yyreduce:
     free(message);  // Libera la memoria de 'message'
     free(formatted_message);  // Libera la memoria de 'formatted_message'
 }
-#line 1827 "phppy.tab.c"
+#line 1865 "phppy.tab.c"
     break;
 
-  case 40: /* if_statement: IF LPAREN condicion RPAREN LBRACE statements RBRACE elseif_clauses else_clause  */
-#line 417 "phppy.y"
+  case 44: /* if_statement: IF LPAREN condicion RPAREN LBRACE statements RBRACE elseif_clauses else_clause  */
+#line 424 "phppy.y"
 {
     char *if_part = indent_code((yyvsp[-3].strval));  // Indenta el código del bloque 'if'
     char *result = malloc(strlen((yyvsp[-6].strval)) + strlen(if_part) + strlen((yyvsp[-1].strval)) + strlen((yyvsp[0].strval)) + 10);  // Reserva memoria para el resultado
@@ -1835,11 +1873,11 @@ yyreduce:
     (yyval.strval) = result;  // Almacena el resultado
     free(if_part);  // Libera la memoria de 'if_part'
 }
-#line 1839 "phppy.tab.c"
+#line 1877 "phppy.tab.c"
     break;
 
-  case 41: /* if_statement: IF LPAREN condicion RPAREN LBRACE statements RBRACE elseif_clauses  */
-#line 425 "phppy.y"
+  case 45: /* if_statement: IF LPAREN condicion RPAREN LBRACE statements RBRACE elseif_clauses  */
+#line 432 "phppy.y"
 {
     char *if_part = indent_code((yyvsp[-2].strval));  // Indenta el código del bloque 'if'
     char *result = malloc(strlen((yyvsp[-5].strval)) + strlen(if_part) + strlen((yyvsp[0].strval)) + 10);  // Reserva memoria para el resultado
@@ -1847,11 +1885,11 @@ yyreduce:
     (yyval.strval) = result;  // Almacena el resultado
     free(if_part);  // Libera la memoria de 'if_part'
 }
-#line 1851 "phppy.tab.c"
+#line 1889 "phppy.tab.c"
     break;
 
-  case 42: /* if_statement: IF LPAREN condicion RPAREN LBRACE statements RBRACE else_clause  */
-#line 433 "phppy.y"
+  case 46: /* if_statement: IF LPAREN condicion RPAREN LBRACE statements RBRACE else_clause  */
+#line 440 "phppy.y"
 {
     char *if_part = indent_code((yyvsp[-2].strval));  // Indenta el código del bloque 'if'
     char *result = malloc(strlen((yyvsp[-5].strval)) + strlen(if_part) + strlen((yyvsp[0].strval)) + 20);  // Reserva memoria para el resultado
@@ -1859,11 +1897,11 @@ yyreduce:
     (yyval.strval) = result;  // Almacena el resultado
     free(if_part);  // Libera la memoria de 'if_part'
 }
-#line 1863 "phppy.tab.c"
+#line 1901 "phppy.tab.c"
     break;
 
-  case 43: /* if_statement: IF LPAREN condicion RPAREN LBRACE statements RBRACE  */
-#line 441 "phppy.y"
+  case 47: /* if_statement: IF LPAREN condicion RPAREN LBRACE statements RBRACE  */
+#line 448 "phppy.y"
 {
     char *if_part = indent_code((yyvsp[-1].strval));  // Indenta el código del bloque 'if'
     char *result = malloc(strlen((yyvsp[-4].strval)) + strlen(if_part) + 10);  // Reserva memoria para el resultado
@@ -1871,21 +1909,21 @@ yyreduce:
     (yyval.strval) = result;  // Almacena el resultado
     free(if_part);  // Libera la memoria de 'if_part'
 }
-#line 1875 "phppy.tab.c"
+#line 1913 "phppy.tab.c"
     break;
 
-  case 44: /* if_statement: IF LPAREN condicion RPAREN LBRACE RBRACE  */
-#line 450 "phppy.y"
+  case 48: /* if_statement: IF LPAREN condicion RPAREN LBRACE RBRACE  */
+#line 457 "phppy.y"
 {
     char *result = malloc(strlen((yyvsp[-3].strval)) + 15);  // Reserva memoria para el resultado
     sprintf(result, "if (%s):\n    pass\n", (yyvsp[-3].strval));  // Formatea la sentencia 'if' con un bloque vacío
     (yyval.strval) = result;  // Almacena el resultado
 }
-#line 1885 "phppy.tab.c"
+#line 1923 "phppy.tab.c"
     break;
 
-  case 45: /* if_statement: IF LPAREN condicion RPAREN LBRACE statements RBRACE ELSE LBRACE RBRACE  */
-#line 456 "phppy.y"
+  case 49: /* if_statement: IF LPAREN condicion RPAREN LBRACE statements RBRACE ELSE LBRACE RBRACE  */
+#line 463 "phppy.y"
 {
     char *indented_statements_if = indent_code((yyvsp[-4].strval));  // Indenta el código del bloque 'if'
     char *result = malloc(strlen((yyvsp[-7].strval)) + strlen(indented_statements_if) + 20);  // Reserva memoria para el resultado
@@ -1893,11 +1931,11 @@ yyreduce:
     (yyval.strval) = result;  // Almacena el resultado
     free(indented_statements_if);  // Libera la memoria de 'indented_statements_if'
 }
-#line 1897 "phppy.tab.c"
+#line 1935 "phppy.tab.c"
     break;
 
-  case 46: /* if_statement: IF LPAREN condicion RPAREN LBRACE RBRACE ELSE LBRACE statements RBRACE  */
-#line 464 "phppy.y"
+  case 50: /* if_statement: IF LPAREN condicion RPAREN LBRACE RBRACE ELSE LBRACE statements RBRACE  */
+#line 471 "phppy.y"
 {
     char *indented_statements_else = indent_code((yyvsp[-1].strval));  // Indenta el código del bloque 'else'
     char *result = malloc(strlen((yyvsp[-7].strval)) + strlen(indented_statements_else) + 20);  // Reserva memoria para el resultado
@@ -1905,21 +1943,21 @@ yyreduce:
     (yyval.strval) = result;  // Almacena el resultado
     free(indented_statements_else);  // Libera la memoria de 'indented_statements_else'
 }
-#line 1909 "phppy.tab.c"
+#line 1947 "phppy.tab.c"
     break;
 
-  case 48: /* elseif_clauses: elseif_clauses elseif_clause  */
-#line 475 "phppy.y"
+  case 52: /* elseif_clauses: elseif_clauses elseif_clause  */
+#line 482 "phppy.y"
     {
         char *result = malloc(strlen((yyvsp[-1].strval)) + strlen((yyvsp[0].strval)) + 1);  // Reserva memoria para el resultado
         sprintf(result, "%s%s", (yyvsp[-1].strval), (yyvsp[0].strval));  // Concatenar las cláusulas 'elseif'
         (yyval.strval) = result;  // Almacena el resultado
     }
-#line 1919 "phppy.tab.c"
+#line 1957 "phppy.tab.c"
     break;
 
-  case 49: /* elseif_clause: ELSEIF LPAREN condicion RPAREN LBRACE statements RBRACE  */
-#line 483 "phppy.y"
+  case 53: /* elseif_clause: ELSEIF LPAREN condicion RPAREN LBRACE statements RBRACE  */
+#line 490 "phppy.y"
 {
     char *elseif_part = indent_code((yyvsp[-1].strval));  // Indenta el código del bloque 'elseif'
     char *result = malloc(strlen((yyvsp[-4].strval)) + strlen(elseif_part) + 10);  // Reserva memoria para el resultado
@@ -1927,11 +1965,11 @@ yyreduce:
     (yyval.strval) = result;  // Almacena el resultado
     free(elseif_part);  // Libera la memoria de 'elseif_part'
 }
-#line 1931 "phppy.tab.c"
+#line 1969 "phppy.tab.c"
     break;
 
-  case 50: /* else_clause: ELSE LBRACE statements RBRACE  */
-#line 493 "phppy.y"
+  case 54: /* else_clause: ELSE LBRACE statements RBRACE  */
+#line 500 "phppy.y"
 {
     char *else_part = indent_code((yyvsp[-1].strval));  // Indenta el código del bloque 'else'
     char *result = malloc(strlen(else_part) + 20);  // Reserva memoria para el resultado
@@ -1939,11 +1977,11 @@ yyreduce:
     (yyval.strval) = result;  // Almacena el resultado
     free(else_part);  // Libera la memoria de 'else_part'
 }
-#line 1943 "phppy.tab.c"
+#line 1981 "phppy.tab.c"
     break;
 
-  case 51: /* while_statement: WHILE LPAREN condicion RPAREN LBRACE statements RBRACE  */
-#line 503 "phppy.y"
+  case 55: /* while_statement: WHILE LPAREN condicion RPAREN LBRACE statements RBRACE  */
+#line 510 "phppy.y"
 {
     char *indented_statements = indent_code((yyvsp[-1].strval));  // Indenta el código del bloque 'while'
     char *result = malloc(strlen((yyvsp[-4].strval)) + strlen(indented_statements) + 15);  // Reserva memoria para el resultado
@@ -1951,11 +1989,11 @@ yyreduce:
     (yyval.strval) = result;  // Almacena el resultado
     free(indented_statements);  // Libera la memoria de 'indented_statements'
 }
-#line 1955 "phppy.tab.c"
+#line 1993 "phppy.tab.c"
     break;
 
-  case 52: /* while_statement: WHILE LPAREN condicion RPAREN COLON statements ENDWHILE SEMICOLON  */
-#line 511 "phppy.y"
+  case 56: /* while_statement: WHILE LPAREN condicion RPAREN COLON statements ENDWHILE SEMICOLON  */
+#line 518 "phppy.y"
 {
     char *indented_statements = indent_code((yyvsp[-2].strval));  // Indenta el código del bloque 'while'
     char *result = malloc(strlen((yyvsp[-5].strval)) + strlen(indented_statements) + 15);  // Reserva memoria para el resultado
@@ -1963,157 +2001,157 @@ yyreduce:
     (yyval.strval) = result;  // Almacena el resultado
     free(indented_statements);  // Libera la memoria de 'indented_statements'
 }
-#line 1967 "phppy.tab.c"
+#line 2005 "phppy.tab.c"
     break;
 
-  case 53: /* while_statement: WHILE LPAREN condicion RPAREN LBRACE RBRACE  */
-#line 519 "phppy.y"
+  case 57: /* while_statement: WHILE LPAREN condicion RPAREN LBRACE RBRACE  */
+#line 526 "phppy.y"
 {
     char *result = malloc(strlen((yyvsp[-3].strval)) + 15);  // Reserva memoria para el resultado
     sprintf(result, "while (%s):\n    pass\n", (yyvsp[-3].strval));  // Formatea la sentencia 'while' con un bloque vacío
     (yyval.strval) = result;  // Almacena el resultado
 }
-#line 1977 "phppy.tab.c"
+#line 2015 "phppy.tab.c"
     break;
 
-  case 54: /* condicion: VARIABLE GT VARIABLE  */
-#line 528 "phppy.y"
+  case 58: /* condicion: VARIABLE GT VARIABLE  */
+#line 535 "phppy.y"
     {
         (yyval.strval) = (char *) malloc(strlen((yyvsp[-2].strval)) + strlen((yyvsp[0].strval)) + 4); // 4: para espacio, operador, espacio, y terminador nulo
         sprintf((yyval.strval), "%s > %s", (yyvsp[-2].strval) + 1, (yyvsp[0].strval) + 1); // Omitimos el carácter '$'
     }
-#line 1986 "phppy.tab.c"
+#line 2024 "phppy.tab.c"
     break;
 
-  case 55: /* condicion: VARIABLE LT VARIABLE  */
-#line 533 "phppy.y"
+  case 59: /* condicion: VARIABLE LT VARIABLE  */
+#line 540 "phppy.y"
     {
         (yyval.strval) = (char *) malloc(strlen((yyvsp[-2].strval)) + strlen((yyvsp[0].strval)) + 4);
         sprintf((yyval.strval), "%s < %s", (yyvsp[-2].strval) + 1, (yyvsp[0].strval) + 1); // Omitimos el carácter '$'
     }
-#line 1995 "phppy.tab.c"
+#line 2033 "phppy.tab.c"
     break;
 
-  case 56: /* condicion: VARIABLE EQ VARIABLE  */
-#line 538 "phppy.y"
+  case 60: /* condicion: VARIABLE EQ VARIABLE  */
+#line 545 "phppy.y"
     {
         (yyval.strval) = (char *) malloc(strlen((yyvsp[-2].strval)) + strlen((yyvsp[0].strval)) + 4);
         sprintf((yyval.strval), "%s == %s", (yyvsp[-2].strval) + 1, (yyvsp[0].strval) + 1); // En Python se usa '==' para la igualdad
     }
-#line 2004 "phppy.tab.c"
+#line 2042 "phppy.tab.c"
     break;
 
-  case 57: /* condicion: VARIABLE GT value  */
-#line 543 "phppy.y"
+  case 61: /* condicion: VARIABLE GT value  */
+#line 550 "phppy.y"
     {
         (yyval.strval) = (char *) malloc(strlen((yyvsp[-2].strval)) + strlen((yyvsp[0].strval)) + 4); // 4: para espacio, operador, espacio, y terminador nulo
         sprintf((yyval.strval), "%s > %s", (yyvsp[-2].strval) + 1, (yyvsp[0].strval)); // Omitimos el carácter '$'
     }
-#line 2013 "phppy.tab.c"
+#line 2051 "phppy.tab.c"
     break;
 
-  case 58: /* condicion: VARIABLE LT value  */
-#line 548 "phppy.y"
+  case 62: /* condicion: VARIABLE LT value  */
+#line 555 "phppy.y"
     {
         (yyval.strval) = (char *) malloc(strlen((yyvsp[-2].strval)) + strlen((yyvsp[0].strval)) + 4);
         sprintf((yyval.strval), "%s < %s", (yyvsp[-2].strval) + 1, (yyvsp[0].strval)); // Omitimos el carácter '$'
     }
-#line 2022 "phppy.tab.c"
+#line 2060 "phppy.tab.c"
     break;
 
-  case 59: /* condicion: VARIABLE EQ value  */
-#line 553 "phppy.y"
+  case 63: /* condicion: VARIABLE EQ value  */
+#line 560 "phppy.y"
     {
         (yyval.strval) = (char *) malloc(strlen((yyvsp[-2].strval)) + strlen((yyvsp[0].strval)) + 4);
         sprintf((yyval.strval), "%s == %s", (yyvsp[-2].strval) + 1, (yyvsp[0].strval)); // En Python se usa '==' para la igualdad
     }
-#line 2031 "phppy.tab.c"
+#line 2069 "phppy.tab.c"
     break;
 
-  case 60: /* condicion: VARIABLE LE VARIABLE  */
-#line 558 "phppy.y"
+  case 64: /* condicion: VARIABLE LE VARIABLE  */
+#line 565 "phppy.y"
     {
         (yyval.strval) = (char *) malloc(strlen((yyvsp[-2].strval)) + strlen((yyvsp[0].strval)) + 5);
         sprintf((yyval.strval), "%s <= %s", (yyvsp[-2].strval) + 1, (yyvsp[0].strval) + 1); // Omitimos el carácter '$'
     }
-#line 2040 "phppy.tab.c"
+#line 2078 "phppy.tab.c"
     break;
 
-  case 61: /* condicion: VARIABLE LE value  */
-#line 563 "phppy.y"
+  case 65: /* condicion: VARIABLE LE value  */
+#line 570 "phppy.y"
     {
         (yyval.strval) = (char *) malloc(strlen((yyvsp[-2].strval)) + strlen((yyvsp[0].strval)) + 5);
         sprintf((yyval.strval), "%s <= %s", (yyvsp[-2].strval) + 1, (yyvsp[0].strval)); // Omitimos el carácter '$'
     }
-#line 2049 "phppy.tab.c"
+#line 2087 "phppy.tab.c"
     break;
 
-  case 62: /* condicion: value EQ value  */
-#line 568 "phppy.y"
+  case 66: /* condicion: value EQ value  */
+#line 575 "phppy.y"
     {
         (yyval.strval) = (char *) malloc(strlen((yyvsp[-2].strval)) + strlen((yyvsp[0].strval)) + 4);
         sprintf((yyval.strval), "%s == %s", (yyvsp[-2].strval), (yyvsp[0].strval)); // En Python se usa '==' para la igualdad
     }
-#line 2058 "phppy.tab.c"
+#line 2096 "phppy.tab.c"
     break;
 
-  case 63: /* condicion: value NE value  */
-#line 573 "phppy.y"
+  case 67: /* condicion: value NE value  */
+#line 580 "phppy.y"
     {
         (yyval.strval) = (char *) malloc(strlen((yyvsp[-2].strval)) + strlen((yyvsp[0].strval)) + 5);
         sprintf((yyval.strval), "%s != %s", (yyvsp[-2].strval), (yyvsp[0].strval)); // En Python se usa '!=' para desigualdad
     }
-#line 2067 "phppy.tab.c"
+#line 2105 "phppy.tab.c"
     break;
 
-  case 69: /* value: INTEGER  */
-#line 583 "phppy.y"
-               { (yyval.strval) = (yyvsp[0].strval); }
-#line 2073 "phppy.tab.c"
-    break;
-
-  case 70: /* value: FLOAT  */
-#line 584 "phppy.y"
-            { (yyval.strval) = (yyvsp[0].strval); }
-#line 2079 "phppy.tab.c"
-    break;
-
-  case 71: /* value: CHAR  */
-#line 585 "phppy.y"
-           { (yyval.strval) = (yyvsp[0].strval); }
-#line 2085 "phppy.tab.c"
-    break;
-
-  case 72: /* value: STRING  */
-#line 586 "phppy.y"
-             { (yyval.strval) = (yyvsp[0].strval); }
-#line 2091 "phppy.tab.c"
-    break;
-
-  case 73: /* value: BOOL  */
-#line 587 "phppy.y"
-           { (yyval.strval) = (yyvsp[0].strval); }
-#line 2097 "phppy.tab.c"
-    break;
-
-  case 74: /* value: array_value  */
-#line 588 "phppy.y"
-                  { (yyval.strval) = (yyvsp[0].strval); }
-#line 2103 "phppy.tab.c"
-    break;
-
-  case 75: /* value: VARIABLE LBRACKET value RBRACKET  */
+  case 73: /* value: INTEGER  */
 #line 590 "phppy.y"
+               { (yyval.strval) = (yyvsp[0].strval); }
+#line 2111 "phppy.tab.c"
+    break;
+
+  case 74: /* value: FLOAT  */
+#line 591 "phppy.y"
+            { (yyval.strval) = (yyvsp[0].strval); }
+#line 2117 "phppy.tab.c"
+    break;
+
+  case 75: /* value: CHAR  */
+#line 592 "phppy.y"
+           { (yyval.strval) = (yyvsp[0].strval); }
+#line 2123 "phppy.tab.c"
+    break;
+
+  case 76: /* value: STRING  */
+#line 593 "phppy.y"
+             { (yyval.strval) = (yyvsp[0].strval); }
+#line 2129 "phppy.tab.c"
+    break;
+
+  case 77: /* value: BOOL  */
+#line 594 "phppy.y"
+           { (yyval.strval) = (yyvsp[0].strval); }
+#line 2135 "phppy.tab.c"
+    break;
+
+  case 78: /* value: array_value  */
+#line 595 "phppy.y"
+                  { (yyval.strval) = (yyvsp[0].strval); }
+#line 2141 "phppy.tab.c"
+    break;
+
+  case 79: /* value: VARIABLE LBRACKET value RBRACKET  */
+#line 597 "phppy.y"
     {
         char *result = malloc(strlen((yyvsp[-3].strval)) + strlen((yyvsp[-1].strval)) + 4);
         sprintf(result, "%s[%s]", (yyvsp[-3].strval) + 1, (yyvsp[-1].strval));  // Omite el carácter '$' y formatea la variable con el índice
         (yyval.strval) = result;  // Asigna el resultado formateado
     }
-#line 2113 "phppy.tab.c"
+#line 2151 "phppy.tab.c"
     break;
 
-  case 76: /* value: VARIABLE LBRACKET STRING RBRACKET  */
-#line 596 "phppy.y"
+  case 80: /* value: VARIABLE LBRACKET STRING RBRACKET  */
+#line 603 "phppy.y"
     {
         char *key = strip_quotes((yyvsp[-1].strval));  // Elimina las comillas de la cadena
         char *result = malloc(strlen((yyvsp[-3].strval)) + strlen(key) + 4);
@@ -2121,67 +2159,67 @@ yyreduce:
         free(key);  // Libera la memoria de la clave
         (yyval.strval) = result;  // Asigna el resultado formateado
     }
-#line 2125 "phppy.tab.c"
+#line 2163 "phppy.tab.c"
     break;
 
-  case 77: /* array_value: ARRAY LPAREN RPAREN  */
-#line 606 "phppy.y"
+  case 81: /* array_value: ARRAY LPAREN RPAREN  */
+#line 613 "phppy.y"
 {
     (yyval.strval) = strdup("{}");  // Representa un array vacío
 }
-#line 2133 "phppy.tab.c"
+#line 2171 "phppy.tab.c"
     break;
 
-  case 78: /* array_value: ARRAY LPAREN value_list RPAREN  */
-#line 610 "phppy.y"
+  case 82: /* array_value: ARRAY LPAREN value_list RPAREN  */
+#line 617 "phppy.y"
 {
     char *result = malloc(strlen((yyvsp[-1].strval)) + 3);
     sprintf(result, "[%s]", (yyvsp[-1].strval));  // Formatea la lista de valores como un array en Python
     (yyval.strval) = result;  // Asigna el resultado formateado
 }
-#line 2143 "phppy.tab.c"
+#line 2181 "phppy.tab.c"
     break;
 
-  case 79: /* array_value: ARRAY LPAREN key_value_list RPAREN  */
-#line 616 "phppy.y"
+  case 83: /* array_value: ARRAY LPAREN key_value_list RPAREN  */
+#line 623 "phppy.y"
 {
     char *result = malloc(strlen((yyvsp[-1].strval)) + 3);
     sprintf(result, "{%s}", (yyvsp[-1].strval));  // Formatea la lista de pares clave-valor como un diccionario en Python
     (yyval.strval) = result;  // Asigna el resultado formateado
 }
-#line 2153 "phppy.tab.c"
+#line 2191 "phppy.tab.c"
     break;
 
-  case 80: /* array_value: ARRAY LPAREN key_value_pair RPAREN  */
-#line 622 "phppy.y"
+  case 84: /* array_value: ARRAY LPAREN key_value_pair RPAREN  */
+#line 629 "phppy.y"
 {
     char *result = malloc(strlen((yyvsp[-1].strval)) + 3);
     sprintf(result, "{%s}", (yyvsp[-1].strval));  // Formatea un único par clave-valor como un diccionario en Python
     (yyval.strval) = result;  // Asigna el resultado formateado
 }
-#line 2163 "phppy.tab.c"
+#line 2201 "phppy.tab.c"
     break;
 
-  case 81: /* key_value_list: key_value_pair  */
-#line 630 "phppy.y"
+  case 85: /* key_value_list: key_value_pair  */
+#line 637 "phppy.y"
 {
     (yyval.strval) = (yyvsp[0].strval);  // Asigna el único par clave-valor a `$$`
 }
-#line 2171 "phppy.tab.c"
+#line 2209 "phppy.tab.c"
     break;
 
-  case 82: /* key_value_list: key_value_list COMMA key_value_pair  */
-#line 634 "phppy.y"
+  case 86: /* key_value_list: key_value_list COMMA key_value_pair  */
+#line 641 "phppy.y"
 {
     char *result = malloc(strlen((yyvsp[-2].strval)) + strlen((yyvsp[0].strval)) + 2);
     sprintf(result, "%s, %s", (yyvsp[-2].strval), (yyvsp[0].strval));  // Concadena pares clave-valor con coma
     (yyval.strval) = result;  // Asigna el resultado formateado
 }
-#line 2181 "phppy.tab.c"
+#line 2219 "phppy.tab.c"
     break;
 
-  case 83: /* key_value_pair: STRING ARROW value  */
-#line 642 "phppy.y"
+  case 87: /* key_value_pair: STRING ARROW value  */
+#line 649 "phppy.y"
 {
     char *key = (yyvsp[-2].strval);  // Asigna la clave
     char *result = malloc(strlen(key) + strlen((yyvsp[0].strval)) + 4);
@@ -2189,39 +2227,39 @@ yyreduce:
     free(key);  // Libera la memoria de la clave
     (yyval.strval) = result;  // Asigna el resultado formateado
 }
-#line 2193 "phppy.tab.c"
+#line 2231 "phppy.tab.c"
     break;
 
-  case 84: /* key_value_pair: IDENTIFIER ARROW value  */
-#line 650 "phppy.y"
+  case 88: /* key_value_pair: IDENTIFIER ARROW value  */
+#line 657 "phppy.y"
 {
     char *result = malloc(strlen((yyvsp[-2].strval)) + strlen((yyvsp[0].strval)) + 4);
     sprintf(result, "\"%s\": %s", (yyvsp[-2].strval), (yyvsp[0].strval));  // Formatea el par clave-valor con identificador como clave
     (yyval.strval) = result;  // Asigna el resultado formateado
 }
-#line 2203 "phppy.tab.c"
+#line 2241 "phppy.tab.c"
     break;
 
-  case 85: /* value_list: value  */
-#line 658 "phppy.y"
+  case 89: /* value_list: value  */
+#line 665 "phppy.y"
 {
     (yyval.strval) = (yyvsp[0].strval);  // Asigna un único valor a `$$`
 }
-#line 2211 "phppy.tab.c"
+#line 2249 "phppy.tab.c"
     break;
 
-  case 86: /* value_list: value_list COMMA value  */
-#line 662 "phppy.y"
+  case 90: /* value_list: value_list COMMA value  */
+#line 669 "phppy.y"
 {
     char *result = malloc(strlen((yyvsp[-2].strval)) + strlen((yyvsp[0].strval)) + 2);
     sprintf(result, "%s, %s", (yyvsp[-2].strval), (yyvsp[0].strval));  // Concadena valores con coma
     (yyval.strval) = result;  // Asigna el resultado formateado
 }
-#line 2221 "phppy.tab.c"
+#line 2259 "phppy.tab.c"
     break;
 
-  case 87: /* function_declaration: FUNCTION IDENTIFIER LPAREN parameter_list RPAREN LBRACE statements RBRACE  */
-#line 670 "phppy.y"
+  case 91: /* function_declaration: FUNCTION IDENTIFIER LPAREN parameter_list RPAREN LBRACE statements RBRACE  */
+#line 677 "phppy.y"
 {
     char *func_name = (yyvsp[-6].strval);  // Asigna el nombre de la función
     char *params = (yyvsp[-4].strval);  // Asigna los parámetros de la función
@@ -2231,55 +2269,55 @@ yyreduce:
     (yyval.strval) = result;  // Asigna el resultado formateado
     free(body);  // Libera la memoria del cuerpo de la función
 }
-#line 2235 "phppy.tab.c"
+#line 2273 "phppy.tab.c"
     break;
 
-  case 88: /* parameter_list: %empty  */
-#line 682 "phppy.y"
+  case 92: /* parameter_list: %empty  */
+#line 689 "phppy.y"
 {
     (yyval.strval) = strdup("");  // Representa una lista de parámetros vacía
 }
-#line 2243 "phppy.tab.c"
+#line 2281 "phppy.tab.c"
     break;
 
-  case 89: /* parameter_list: VARIABLE  */
-#line 686 "phppy.y"
+  case 93: /* parameter_list: VARIABLE  */
+#line 693 "phppy.y"
 {
     (yyval.strval) = strdup((yyvsp[0].strval) + 1);  // Omite el carácter '$' y representa una variable como parámetro
 }
-#line 2251 "phppy.tab.c"
+#line 2289 "phppy.tab.c"
     break;
 
-  case 90: /* parameter_list: IDENTIFIER  */
-#line 690 "phppy.y"
+  case 94: /* parameter_list: IDENTIFIER  */
+#line 697 "phppy.y"
 {
     (yyval.strval) = strdup((yyvsp[0].strval));  // Representa un identificador como parámetro
 }
-#line 2259 "phppy.tab.c"
+#line 2297 "phppy.tab.c"
     break;
 
-  case 91: /* parameter_list: parameter_list COMMA VARIABLE  */
-#line 694 "phppy.y"
+  case 95: /* parameter_list: parameter_list COMMA VARIABLE  */
+#line 701 "phppy.y"
 {
     char *result = malloc(strlen((yyvsp[-2].strval)) + strlen((yyvsp[0].strval)) + 2);
     sprintf(result, "%s, %s", (yyvsp[-2].strval), (yyvsp[0].strval) + 1);  // Omite el carácter '$' y concatena variables como parámetros
     (yyval.strval) = result;  // Asigna el resultado formateado
 }
-#line 2269 "phppy.tab.c"
+#line 2307 "phppy.tab.c"
     break;
 
-  case 92: /* parameter_list: parameter_list COMMA IDENTIFIER  */
-#line 700 "phppy.y"
+  case 96: /* parameter_list: parameter_list COMMA IDENTIFIER  */
+#line 707 "phppy.y"
 {
     char *result = malloc(strlen((yyvsp[-2].strval)) + strlen((yyvsp[0].strval)) + 2);
     sprintf(result, "%s, %s", (yyvsp[-2].strval), (yyvsp[0].strval));  // Concatena identificadores como parámetros
     (yyval.strval) = result;  // Asigna el resultado formateado
 }
-#line 2279 "phppy.tab.c"
+#line 2317 "phppy.tab.c"
     break;
 
-  case 93: /* function_call: IDENTIFIER LPAREN argument_list RPAREN SEMICOLON  */
-#line 708 "phppy.y"
+  case 97: /* function_call: IDENTIFIER LPAREN argument_list RPAREN SEMICOLON  */
+#line 715 "phppy.y"
 {
     char *func_name = (yyvsp[-4].strval);  // Asigna el nombre de la función
     char *args = (yyvsp[-2].strval);  // Asigna los argumentos de la función
@@ -2287,103 +2325,103 @@ yyreduce:
     sprintf(result, "%s(%s)\n", func_name, args);  // Formatea la llamada a la función
     (yyval.strval) = result;  // Asigna el resultado formateado
 }
-#line 2291 "phppy.tab.c"
+#line 2329 "phppy.tab.c"
     break;
 
-  case 94: /* argument_list: %empty  */
-#line 718 "phppy.y"
+  case 98: /* argument_list: %empty  */
+#line 725 "phppy.y"
 {
     (yyval.strval) = strdup("");  // Representa una lista de argumentos vacía
 }
-#line 2299 "phppy.tab.c"
+#line 2337 "phppy.tab.c"
     break;
 
-  case 95: /* argument_list: value  */
-#line 722 "phppy.y"
+  case 99: /* argument_list: value  */
+#line 729 "phppy.y"
 {
     (yyval.strval) = strdup((yyvsp[0].strval));  // Representa un único valor como argumento
 }
-#line 2307 "phppy.tab.c"
+#line 2345 "phppy.tab.c"
     break;
 
-  case 96: /* argument_list: VARIABLE  */
-#line 726 "phppy.y"
+  case 100: /* argument_list: VARIABLE  */
+#line 733 "phppy.y"
 {
     (yyval.strval) = strdup((yyvsp[0].strval) + 1);  // Omite el carácter '$' y representa una variable como argumento
 }
-#line 2315 "phppy.tab.c"
+#line 2353 "phppy.tab.c"
     break;
 
-  case 97: /* argument_list: IDENTIFIER  */
-#line 730 "phppy.y"
+  case 101: /* argument_list: IDENTIFIER  */
+#line 737 "phppy.y"
 {
     (yyval.strval) = strdup((yyvsp[0].strval));  // Representa un identificador como argumento
 }
-#line 2323 "phppy.tab.c"
+#line 2361 "phppy.tab.c"
     break;
 
-  case 98: /* argument_list: argument_list COMMA value  */
-#line 734 "phppy.y"
+  case 102: /* argument_list: argument_list COMMA value  */
+#line 741 "phppy.y"
 {
     char *result = malloc(strlen((yyvsp[-2].strval)) + strlen((yyvsp[0].strval)) + 2);
     sprintf(result, "%s, %s", (yyvsp[-2].strval), (yyvsp[0].strval));  // Concatena valores como argumentos
     (yyval.strval) = result;  // Asigna el resultado formateado
 }
-#line 2333 "phppy.tab.c"
+#line 2371 "phppy.tab.c"
     break;
 
-  case 99: /* argument_list: argument_list COMMA VARIABLE  */
-#line 740 "phppy.y"
+  case 103: /* argument_list: argument_list COMMA VARIABLE  */
+#line 747 "phppy.y"
 {
     char *result = malloc(strlen((yyvsp[-2].strval)) + strlen((yyvsp[0].strval)) + 2);
     sprintf(result, "%s, %s", (yyvsp[-2].strval), (yyvsp[0].strval) + 1);  // Omite el carácter '$' y concatena variables como argumentos
     (yyval.strval) = result;  // Asigna el resultado formateado
 }
-#line 2343 "phppy.tab.c"
+#line 2381 "phppy.tab.c"
     break;
 
-  case 100: /* argument_list: argument_list COMMA IDENTIFIER  */
-#line 746 "phppy.y"
+  case 104: /* argument_list: argument_list COMMA IDENTIFIER  */
+#line 753 "phppy.y"
 {
     char *result = malloc(strlen((yyvsp[-2].strval)) + strlen((yyvsp[0].strval)) + 2);
     sprintf(result, "%s, %s", (yyvsp[-2].strval), (yyvsp[0].strval));  // Concatena identificadores como argumentos
     (yyval.strval) = result;  // Asigna el resultado formateado
 }
-#line 2353 "phppy.tab.c"
+#line 2391 "phppy.tab.c"
     break;
 
-  case 101: /* array_declaration: ARRAY LPAREN array_items RPAREN  */
-#line 754 "phppy.y"
+  case 105: /* array_declaration: ARRAY LPAREN array_items RPAREN  */
+#line 761 "phppy.y"
 {
     char *result = malloc(strlen((yyvsp[-1].strval)) + 3);
     sprintf(result, "{%s}", (yyvsp[-1].strval));  // Formatea los ítems del array como un diccionario en Python
     (yyval.strval) = result;  // Asigna el resultado formateado
 }
-#line 2363 "phppy.tab.c"
+#line 2401 "phppy.tab.c"
     break;
 
-  case 102: /* array_declaration: LBRACKET array_items RBRACKET  */
-#line 760 "phppy.y"
+  case 106: /* array_declaration: LBRACKET array_items RBRACKET  */
+#line 767 "phppy.y"
 {
     char *result = malloc(strlen((yyvsp[-1].strval)) + 3);
     sprintf(result, "{%s}", (yyvsp[-1].strval));  // Formatea los ítems del array como un diccionario en Python
     (yyval.strval) = result;  // Asigna el resultado formateado
 }
-#line 2373 "phppy.tab.c"
+#line 2411 "phppy.tab.c"
     break;
 
-  case 104: /* array_items: array_items COMMA array_item  */
-#line 769 "phppy.y"
+  case 108: /* array_items: array_items COMMA array_item  */
+#line 776 "phppy.y"
 {
     char *result = malloc(strlen((yyvsp[-2].strval)) + strlen((yyvsp[0].strval)) + 3);
     sprintf(result, "%s, %s", (yyvsp[-2].strval), (yyvsp[0].strval));  // Concatena ítems del array con coma
     (yyval.strval) = result;  // Asigna el resultado formateado
 }
-#line 2383 "phppy.tab.c"
+#line 2421 "phppy.tab.c"
     break;
 
-  case 105: /* array_item: STRING ARROW array_declaration  */
-#line 777 "phppy.y"
+  case 109: /* array_item: STRING ARROW array_declaration  */
+#line 784 "phppy.y"
 {
     char *key = strip_quotes((yyvsp[-2].strval));  // Elimina las comillas de la clave
     char *result = malloc(strlen(key) + strlen((yyvsp[0].strval)) + 5);
@@ -2391,11 +2429,11 @@ yyreduce:
     free(key);  // Libera la memoria de la clave
     (yyval.strval) = result;  // Asigna el resultado formateado
 }
-#line 2395 "phppy.tab.c"
+#line 2433 "phppy.tab.c"
     break;
 
-  case 106: /* array_item: STRING ARROW STRING  */
-#line 785 "phppy.y"
+  case 110: /* array_item: STRING ARROW STRING  */
+#line 792 "phppy.y"
 {
     char *key = strip_quotes((yyvsp[-2].strval));  // Elimina las comillas de la clave
     char *value = strip_quotes((yyvsp[0].strval));  // Elimina las comillas del valor
@@ -2405,11 +2443,11 @@ yyreduce:
     free(value);  // Libera la memoria del valor
     (yyval.strval) = result;  // Asigna el resultado formateado
 }
-#line 2409 "phppy.tab.c"
+#line 2447 "phppy.tab.c"
     break;
 
-  case 107: /* array_item: STRING ARROW INTEGER  */
-#line 795 "phppy.y"
+  case 111: /* array_item: STRING ARROW INTEGER  */
+#line 802 "phppy.y"
 {
     char *key = strip_quotes((yyvsp[-2].strval));  // Elimina las comillas de la clave
     char *result = malloc(strlen(key) + strlen((yyvsp[0].strval)) + 5);
@@ -2417,65 +2455,65 @@ yyreduce:
     free(key);  // Libera la memoria de la clave
     (yyval.strval) = result;  // Asigna el resultado formateado
 }
-#line 2421 "phppy.tab.c"
+#line 2459 "phppy.tab.c"
     break;
 
-  case 108: /* class_declaration: CLASS IDENTIFIER LBRACE class_body RBRACE  */
-#line 805 "phppy.y"
+  case 112: /* class_declaration: CLASS IDENTIFIER LBRACE class_body RBRACE  */
+#line 812 "phppy.y"
 {
     char *class_name = (yyvsp[-3].strval);  
     char *result = malloc(strlen(class_name) + strlen((yyvsp[-1].strval)) + 20);
     sprintf(result, "class %s:\n%s", class_name, (yyvsp[-1].strval));
     (yyval.strval) = result;
 }
-#line 2432 "phppy.tab.c"
+#line 2470 "phppy.tab.c"
     break;
 
-  case 110: /* class_body: class_body class_member  */
-#line 815 "phppy.y"
+  case 114: /* class_body: class_body class_member  */
+#line 822 "phppy.y"
 {
     char *result = malloc(strlen((yyvsp[-1].strval)) + strlen((yyvsp[0].strval)) + 1);
     sprintf(result, "%s%s", (yyvsp[-1].strval), (yyvsp[0].strval));
     (yyval.strval) = result;
 }
-#line 2442 "phppy.tab.c"
+#line 2480 "phppy.tab.c"
     break;
 
-  case 113: /* class_property: PUBLIC VARIABLE ASSIGN value SEMICOLON  */
-#line 827 "phppy.y"
+  case 117: /* class_property: PUBLIC VARIABLE ASSIGN value SEMICOLON  */
+#line 834 "phppy.y"
 {
     char *property_name = (yyvsp[-3].strval) + 1;  // Omite el carácter '$'
     char *result = malloc(strlen(property_name) + strlen((yyvsp[-1].strval)) + 30);
     sprintf(result, "    def __init__(self):\n        self.%s = %s\n", property_name, (yyvsp[-1].strval));
     (yyval.strval) = result;
 }
-#line 2453 "phppy.tab.c"
+#line 2491 "phppy.tab.c"
     break;
 
-  case 114: /* class_property: PROTECTED VARIABLE ASSIGN value SEMICOLON  */
-#line 834 "phppy.y"
+  case 118: /* class_property: PROTECTED VARIABLE ASSIGN value SEMICOLON  */
+#line 841 "phppy.y"
 {
     char *property_name = (yyvsp[-3].strval) + 1;  // Omite el carácter '$' y añade un guion bajo
     char *result = malloc(strlen(property_name) + strlen((yyvsp[-1].strval)) + 31);
     sprintf(result, "        self._%s = %s\n", property_name, (yyvsp[-1].strval));
     (yyval.strval) = result;
 }
-#line 2464 "phppy.tab.c"
+#line 2502 "phppy.tab.c"
     break;
 
-  case 115: /* class_property: PRIVATE VARIABLE ASSIGN value SEMICOLON  */
-#line 841 "phppy.y"
+  case 119: /* class_property: PRIVATE VARIABLE ASSIGN value SEMICOLON  */
+#line 848 "phppy.y"
 {
     char *property_name = (yyvsp[-3].strval) + 1;  // Omite el carácter '$' y añade dos guiones bajos
     char *result = malloc(strlen(property_name) + strlen((yyvsp[-1].strval)) + 32);
     sprintf(result, "        self.__%s = %s\n", property_name, (yyvsp[-1].strval));
     (yyval.strval) = result;
 }
-#line 2475 "phppy.tab.c"
+#line 2513 "phppy.tab.c"
     break;
 
-  case 116: /* class_method: PUBLIC FUNCTION IDENTIFIER LPAREN RPAREN LBRACE statements RBRACE  */
-#line 850 "phppy.y"
+  case 120: /* class_method: PUBLIC FUNCTION IDENTIFIER LPAREN RPAREN LBRACE statements RBRACE  */
+#line 857 "phppy.y"
 {
     char *method_name = (yyvsp[-5].strval);  
     char *indented_statements = indent_code(indent_code((yyvsp[-1].strval)));
@@ -2484,11 +2522,11 @@ yyreduce:
     (yyval.strval) = result;
     free(indented_statements);
 }
-#line 2488 "phppy.tab.c"
+#line 2526 "phppy.tab.c"
     break;
 
-  case 117: /* class_method: FUNCTION IDENTIFIER LPAREN RPAREN LBRACE statements RBRACE  */
-#line 859 "phppy.y"
+  case 121: /* class_method: FUNCTION IDENTIFIER LPAREN RPAREN LBRACE statements RBRACE  */
+#line 866 "phppy.y"
 {
     char *method_name = (yyvsp[-5].strval);  
     char *indented_statements = indent_code(indent_code((yyvsp[-1].strval)));
@@ -2497,11 +2535,11 @@ yyreduce:
     (yyval.strval) = result;
     free(indented_statements);
 }
-#line 2501 "phppy.tab.c"
+#line 2539 "phppy.tab.c"
     break;
 
-  case 118: /* object_creation: VARIABLE ASSIGN NEW IDENTIFIER LPAREN RPAREN SEMICOLON  */
-#line 870 "phppy.y"
+  case 122: /* object_creation: VARIABLE ASSIGN NEW IDENTIFIER LPAREN RPAREN SEMICOLON  */
+#line 877 "phppy.y"
 {
     char *var_name = (yyvsp[-6].strval) + 1;  // Omite el carácter '$'
     char *class_name = (yyvsp[-3].strval);
@@ -2509,11 +2547,11 @@ yyreduce:
     sprintf(result, "%s = %s()\n", var_name, class_name);
     (yyval.strval) = result;
 }
-#line 2513 "phppy.tab.c"
+#line 2551 "phppy.tab.c"
     break;
 
 
-#line 2517 "phppy.tab.c"
+#line 2555 "phppy.tab.c"
 
       default: break;
     }
@@ -2706,7 +2744,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 880 "phppy.y"
+#line 887 "phppy.y"
 
 
 void yyerror(const char *s) {  //Función de manejo de errores que se llama cuando ocurre un error de análisis

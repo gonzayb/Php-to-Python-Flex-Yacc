@@ -74,35 +74,36 @@ extern int yydebug;
     ARROW = 275,                   /* ARROW  */
     LBRACKET = 276,                /* LBRACKET  */
     RBRACKET = 277,                /* RBRACKET  */
-    IF = 278,                      /* IF  */
-    ELSEIF = 279,                  /* ELSEIF  */
-    ELSE = 280,                    /* ELSE  */
-    ECHO_TOKEN = 281,              /* ECHO_TOKEN  */
-    IS_INT = 282,                  /* IS_INT  */
-    IS_STRING = 283,               /* IS_STRING  */
-    IS_ARRAY = 284,                /* IS_ARRAY  */
-    IS_FLOAT = 285,                /* IS_FLOAT  */
-    IS_BOOL = 286,                 /* IS_BOOL  */
-    WHILE = 287,                   /* WHILE  */
-    ENDWHILE = 288,                /* ENDWHILE  */
-    INCREMENT = 289,               /* INCREMENT  */
-    RETURN = 290,                  /* RETURN  */
-    FUNCTION = 291,                /* FUNCTION  */
-    GLOBAL = 292,                  /* GLOBAL  */
-    PLUS = 293,                    /* PLUS  */
-    CLASS = 294,                   /* CLASS  */
-    NEW = 295,                     /* NEW  */
-    PUBLIC = 296,                  /* PUBLIC  */
-    PROTECTED = 297,               /* PROTECTED  */
-    PRIVATE = 298,                 /* PRIVATE  */
-    ARROW_OBJ = 299,               /* ARROW_OBJ  */
-    VARIABLE = 300,                /* VARIABLE  */
-    INTEGER = 301,                 /* INTEGER  */
-    FLOAT = 302,                   /* FLOAT  */
-    CHAR = 303,                    /* CHAR  */
-    STRING = 304,                  /* STRING  */
-    BOOL = 305,                    /* BOOL  */
-    IDENTIFIER = 306               /* IDENTIFIER  */
+    DOLLAR = 278,                  /* DOLLAR  */
+    IF = 279,                      /* IF  */
+    ELSEIF = 280,                  /* ELSEIF  */
+    ELSE = 281,                    /* ELSE  */
+    ECHO_TOKEN = 282,              /* ECHO_TOKEN  */
+    IS_INT = 283,                  /* IS_INT  */
+    IS_STRING = 284,               /* IS_STRING  */
+    IS_ARRAY = 285,                /* IS_ARRAY  */
+    IS_FLOAT = 286,                /* IS_FLOAT  */
+    IS_BOOL = 287,                 /* IS_BOOL  */
+    WHILE = 288,                   /* WHILE  */
+    ENDWHILE = 289,                /* ENDWHILE  */
+    INCREMENT = 290,               /* INCREMENT  */
+    RETURN = 291,                  /* RETURN  */
+    FUNCTION = 292,                /* FUNCTION  */
+    GLOBAL = 293,                  /* GLOBAL  */
+    PLUS = 294,                    /* PLUS  */
+    CLASS = 295,                   /* CLASS  */
+    NEW = 296,                     /* NEW  */
+    PUBLIC = 297,                  /* PUBLIC  */
+    PROTECTED = 298,               /* PROTECTED  */
+    PRIVATE = 299,                 /* PRIVATE  */
+    ARROW_OBJ = 300,               /* ARROW_OBJ  */
+    VARIABLE = 301,                /* VARIABLE  */
+    INTEGER = 302,                 /* INTEGER  */
+    FLOAT = 303,                   /* FLOAT  */
+    CHAR = 304,                    /* CHAR  */
+    STRING = 305,                  /* STRING  */
+    BOOL = 306,                    /* BOOL  */
+    IDENTIFIER = 307               /* IDENTIFIER  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -111,11 +112,11 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 155 "phppy.y"
+#line 158 "phppy.y"
 
     char *strval;
 
-#line 119 "phppy.tab.h"
+#line 120 "phppy.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
