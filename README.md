@@ -1,6 +1,12 @@
 # Php to Python Transpiler
 ## Using Flex and Bison
 
+### Requerimientos
+
+- Sistema operativo LINUX
+
+- GLIBC_2.34 (Chequear con el siguiente comando en una Terminal: *ldd --version*)
+
 ### Instrucciones de Uso
 #### Compilar phptopython.l
 
@@ -14,9 +20,17 @@
 
 > gcc -o phptopython lex.yy.c phppy.tab.c -lfl
 
-
 #### Ejecutar pruebas
 > ./phptopython < ./pruebas/\[nombre de la prueba].**php** > ./pruebas/\[nombre de la prueba].**py**
+
+### Utilizar directamente el programa **phptopython** en Linux
+
+1. Descargar el archivo **phptopython**
+2. Crear un archivo php o descargar algún archivo de la carpeta de pruebas
+3. Abrir terminal en la carpeta donde se ubica el archivo phptopython
+4. Modificar los permisos con el siguiente comando:
+> chmod +x phptopython
+5. Ejecutar
 
 ### Ejemplos:
   
