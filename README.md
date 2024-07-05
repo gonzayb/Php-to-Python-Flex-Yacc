@@ -55,3 +55,7 @@
 >  └─$ ./phptopython < ./pruebas/anidado.php > ./resultados/anidado.py
 >  
 >  └─$ ./phptopython < ./pruebas/ambito.php > ./resultados/ambito.py
+> 
+>  └─$ ./phptopython < ./pruebas/ambitoClases.php > ./resultados/ambitoClases.py
+>
+>  └─$ ./phptopython < ./pruebas/clases.php > ./resultados/clases.py
