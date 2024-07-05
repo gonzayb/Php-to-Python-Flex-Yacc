@@ -4,8 +4,10 @@
 ### Requerimientos
 
 - Sistema operativo LINUX
-
 - GLIBC_2.34 (Chequear con el siguiente comando en una Terminal: *ldd --version*)
+- FLEX (Para compilar)
+- Bison (Para compilar)
+- GCC (Para compilar)
 
 ### Instrucciones de Uso
 #### Compilar phptopython.l
