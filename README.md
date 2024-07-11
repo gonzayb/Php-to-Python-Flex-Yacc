@@ -1,5 +1,5 @@
-# Php to Python Transpiler
-## Using Flex and Bison
+# Php to Python Transpiler - Traductor PHP a Python
+## Using Flex and Bison - Usando Flex y Bison
 
 ### Requerimientos
 
@@ -9,7 +9,7 @@
 - Bison (Para compilar)
 - GCC (Para compilar)
 
-### Instrucciones de Uso
+### Instrucciones de Uso (desde 0)
 #### Compilar phptopython.l
 
 > flex phptopython.l
